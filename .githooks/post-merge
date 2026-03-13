@@ -1,0 +1,3 @@
+#!/bin/sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File "$(git rev-parse --show-toplevel)/.githooks/log-git-event.ps1" -EventName "post-merge"
+exit 0

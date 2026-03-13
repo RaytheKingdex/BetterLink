@@ -5,92 +5,105 @@ This folder contains the BetterLink API implementation. The backend is designed 
 ## Recommended Stack
 
 - .NET 8 (ASP.NET Core Web API)
-- Entity Framework Core
-- MySQL 8 (or SQL Server)
-- JWT authentication
-- BCrypt password hashing
+- Entity Framework Core + Pomelo MySQL provider
+- ASP.NET Core Identity (user and role management)
+- JWT bearer authentication
+- Swagger/OpenAPI for endpoint testing
 
 ## Folder Structure
 
 - `Controllers/`: HTTP endpoint controllers
+- `Data/`: EF Core DbContext and identity seed setup
 - `Models/`: Entities, DTOs, and request/response models
-- `Services/`: Business logic and domain services
-- `Program.cs`: Host bootstrap
-- `Startup.cs`: Service registration and middleware
+- `Services/`: Domain services such as JWT token generation
+- `Program.cs`: Host bootstrap, middleware, auth, and Swagger wiring
 
 ## Prerequisites
 
-- .NET SDK 8+
+- **.NET 8 SDK (x64)** — download from <https://dotnet.microsoft.com/download/dotnet/8.0>  
+  Install the **SDK** package, not just the Runtime.
 - Visual Studio 2022 or VS Code
 - MySQL 8+ (or SQL Server)
 - Git
 
+> **Windows PATH note:** Windows may ship with a 32-bit (x86) `dotnet` runtime in
+> `C:\Program Files (x86)\dotnet\` that contains **no SDK** and appears first in PATH.
+> After installing the x64 SDK, verify the right `dotnet` is on your PATH:
+>
+> ```powershell
+> Get-Command dotnet | Select-Object -ExpandProperty Source
+> # should show C:\Program Files\dotnet\dotnet.exe
+> ```
+>
+> If it shows the x86 path, prepend the x64 directory for your session:
+>
+> ```powershell
+> $env:PATH = "C:\Program Files\dotnet;" + $env:PATH
+> dotnet --version   # should now print 8.x.xxx or higher
+> ```
+>
+> For a permanent fix, open **System Properties → Environment Variables** and move
+> `C:\Program Files\dotnet` above `C:\Program Files (x86)\dotnet` in the system PATH.
+
 ## Initial Setup
 
-1. Move into backend folder:
+1. Move into the backend folder:
 
 ```bash
 cd backend
 ```
 
-2. If project files are not created yet, scaffold the API project:
-
-```bash
-dotnet new webapi -n BetterLink.Backend -f net8.0 --use-controllers
-```
-
-3. Add required packages:
-
-```bash
-dotnet add package Microsoft.EntityFrameworkCore
-dotnet add package Microsoft.EntityFrameworkCore.Design
-dotnet add package Pomelo.EntityFrameworkCore.MySql
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
-dotnet add package BCrypt.Net-Next
-```
-
-4. Restore and run:
+1. Restore NuGet dependencies:
 
 ```bash
 dotnet restore
+```
+
+1. Create database and apply migrations:
+
+```bash
+dotnet ef migrations add InitialIdentityAndDomain
+dotnet ef database update
+```
+
+1. Run API:
+
+```bash
 dotnet run
 ```
 
+1. Open Swagger at `https://localhost:<port>/swagger`.
+
 ## Environment Configuration
 
-Create `appsettings.Development.json` values for local use:
+`appsettings.json` and `appsettings.Development.json` are already included. Update:
 
-```json
-{
-	"ConnectionStrings": {
-		"DefaultConnection": "Server=localhost;Database=betterlink;User=betterlink_user;Password=ChangeMe123!;"
-	},
-	"Jwt": {
-		"Key": "replace-with-a-long-random-secret-key",
-		"Issuer": "BetterLink",
-		"Audience": "BetterLink.Client"
-	}
-}
-```
+- `ConnectionStrings:DefaultConnection`
+- `Jwt:Secret`
+- `Jwt:Issuer`
+- `Jwt:Audience`
+- `Jwt:ExpirationInMinutes`
 
 Use environment variables or Azure App Service settings for production secrets.
 
 ## Security Baseline
 
-- Hash all passwords with BCrypt.
+- Use ASP.NET Core Identity password hashing and validation.
 - Use short-lived JWT access tokens.
-- Protect endpoints with role-based authorization.
+- Protect endpoints with role-based authorization (`Student`, `Employer`, `Admin`).
 - Validate incoming payloads with model validation attributes.
 - Enforce HTTPS in production.
 
 ## MVP Endpoint Plan
 
-- `POST /api/auth/register`
+- `POST /api/auth/register/student`
+- `POST /api/auth/register/employer`
 - `POST /api/auth/login`
 - `GET /api/users/me`
 - `PUT /api/users/me`
-- `POST /api/jobs`
 - `GET /api/jobs`
+- `GET /api/jobs/{id}`
+- `POST /api/jobs`
 - `POST /api/jobs/{id}/apply`
 - `GET /api/applications/me`
 - `POST /api/communities`
@@ -102,9 +115,16 @@ Use environment variables or Azure App Service settings for production secrets.
 - Use Swagger UI for manual endpoint checks.
 - Use Postman collection for role-based flow tests.
 - Add unit tests for:
-	- password hashing and login validation
-	- JWT generation/validation
-	- job posting permissions
+  - register/login and token issuance
+  - role-based authorization
+  - job posting ownership rules
+
+## Logging for Documentation
+
+- Enable repo-level git hooks: `../scripts/Enable-GitHooks.ps1`
+- Enable global hooks across repositories: `../scripts/Enable-GlobalGitHookLogging.ps1`
+- Start a full terminal transcript session: `../scripts/Start-RepoTranscript.ps1`
+- Logs are written to `activity-traces/` (repo level) and optionally `$HOME/git-activity-traces` (global).
 
 ## Suggested Development Order
 
