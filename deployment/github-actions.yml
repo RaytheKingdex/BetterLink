@@ -1,4 +1,4 @@
-name: CI
+name: BetterLink Backend CI/CD
 
 on:
   push:
@@ -7,19 +7,74 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+    outputs:
+      has_project: ${{ steps.detect-project.outputs.has_project }}
+    env:
+      BACKEND_PATH: ./backend
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect backend project
+        id: detect-project
+        run: |
+          if find "${{ env.BACKEND_PATH }}" -name "*.csproj" | grep -q .; then
+            echo "has_project=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_project=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip notice
+        if: steps.detect-project.outputs.has_project != 'true'
+        run: echo "No .csproj found under ./backend. Build/test/deploy steps skipped."
+
       - name: Setup .NET
+        if: steps.detect-project.outputs.has_project == 'true'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore
+        if: steps.detect-project.outputs.has_project == 'true'
+        run: dotnet restore ${{ env.BACKEND_PATH }}
 
       - name: Build
-        run: dotnet build --no-restore
+        if: steps.detect-project.outputs.has_project == 'true'
+        run: dotnet build ${{ env.BACKEND_PATH }} --configuration Release --no-restore
+
+      - name: Test
+        if: steps.detect-project.outputs.has_project == 'true'
+        run: dotnet test ${{ env.BACKEND_PATH }} --configuration Release --no-build
+
+      - name: Publish
+        if: steps.detect-project.outputs.has_project == 'true'
+        run: dotnet publish ${{ env.BACKEND_PATH }} --configuration Release --output ./publish
+
+      - name: Upload artifact
+        if: steps.detect-project.outputs.has_project == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-package
+          path: ./publish
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && needs.build-and-test.outputs.has_project == 'true' && secrets.AZURE_WEBAPP_PUBLISH_PROFILE != ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-package
+          path: ./publish
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: app-betterlink-api-dev
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish
