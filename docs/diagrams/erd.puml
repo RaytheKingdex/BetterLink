@@ -1,0 +1,100 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity users {
+  * id : bigint <<PK>>
+  --
+  email : varchar
+  first_name : varchar
+  last_name : varchar
+  created_at : datetime
+}
+
+entity student_profiles {
+  * id : bigint <<PK>>
+  * user_id : bigint <<FK, UQ>>
+  --
+  university : varchar
+  program_name : varchar
+  graduation_year : int
+  gpa : decimal
+}
+
+entity employers {
+  * id : bigint <<PK>>
+  * user_id : bigint <<FK, UQ>>
+  --
+  organization_name : varchar
+  industry : varchar
+  is_verified : bool
+}
+
+entity jobs {
+  * id : bigint <<PK>>
+  * employer_id : bigint <<FK>>
+  --
+  title : varchar
+  description : text
+  employment_type : varchar
+  status : varchar
+  posted_date : datetime
+}
+
+entity applications {
+  * id : bigint <<PK>>
+  * job_id : bigint <<FK>>
+  * student_user_id : bigint <<FK>>
+  --
+  cover_letter : text
+  status : varchar
+  applied_at : datetime
+  <<UQ(job_id, student_user_id)>>
+}
+
+entity communities {
+  * id : bigint <<PK>>
+  * created_by_user_id : bigint <<FK>>
+  --
+  name : varchar
+  description : text
+  created_at : datetime
+}
+
+entity community_members {
+  * id : bigint <<PK>>
+  * community_id : bigint <<FK>>
+  * user_id : bigint <<FK>>
+  --
+  role : varchar
+  joined_at : datetime
+  <<UQ(community_id, user_id)>>
+}
+
+entity messages {
+  * id : bigint <<PK>>
+  * community_id : bigint <<FK>>
+  * sender_user_id : bigint <<FK>>
+  --
+  body : text
+  created_at : datetime
+}
+
+users ||--o| student_profiles : user_id (1:0..1)
+users ||--o| employers : user_id (1:0..1)
+employers ||--o{ jobs : employer_id (1:M)
+jobs ||--o{ applications : job_id (1:M)
+users ||--o{ applications : student_user_id (1:M)
+users ||--o{ communities : created_by_user_id (1:M)
+communities ||--o{ community_members : community_id (1:M)
+users ||--o{ community_members : user_id (1:M)
+communities ||--o{ messages : community_id (1:M)
+users ||--o{ messages : sender_user_id (1:M)
+
+legend right
+  || = exactly one
+  o| = zero or one
+  |{ = one or more
+  o{ = zero or more
+endlegend
+@enduml

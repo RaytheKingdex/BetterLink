@@ -1,0 +1,12 @@
+@startuml
+[*] --> Submitted : Student applies
+
+Submitted --> Reviewing : Employer starts review
+Reviewing --> Shortlisted : Candidate shortlisted
+Reviewing --> Rejected : Not selected
+Shortlisted --> Accepted : Offer accepted
+Shortlisted --> Rejected : Final rejection
+
+Accepted --> [*]
+Rejected --> [*]
+@enduml

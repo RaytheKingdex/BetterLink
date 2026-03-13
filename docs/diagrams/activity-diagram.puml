@@ -1,0 +1,64 @@
+@startuml
+title BetterLink Multi-User Activity Diagram (Sectioned Swimlanes)
+
+|Student|
+start
+:Register student account;
+
+|BetterLink API|
+:Create ApplicationUser + StudentProfile;
+:Assign role = Student;
+:Issue JWT token;
+
+|Student|
+:Browse open jobs;
+:Apply to selected job;
+
+|BetterLink API|
+:Validate Student JWT;
+:Check job status is open;
+if (Already applied?) then (yes)
+  :Return 409 Conflict;
+else (no)
+  :Create JobApplication (submitted);
+  :Return 200 OK;
+endif
+
+|Employer|
+:Register employer account;
+
+|BetterLink API|
+:Create ApplicationUser + EmployerProfile;
+:Assign role = Employer;
+:Issue JWT token;
+
+|Employer|
+:Create job posting;
+
+|BetterLink API|
+:Validate Employer JWT;
+:Persist Job (status = open);
+:Return 201 Created;
+
+|Student|
+:Join community;
+:Post community message;
+
+|BetterLink API|
+:Validate JWT + membership;
+if (Is member?) then (yes)
+  :Save CommunityMessage;
+  :Return 200 OK;
+else (no)
+  :Return 403 Forbid;
+endif
+
+|Admin|
+:Monitor platform health;
+:Manage role governance;
+
+|BetterLink API|
+:Run startup role seeding\n(Student, Employer, Admin);
+:Expose /health endpoint;
+stop
+@enduml

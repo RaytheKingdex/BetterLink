@@ -1,0 +1,25 @@
+@startuml
+actor Student
+participant "AuthController" as Auth
+participant "JobsController" as Jobs
+participant "UserManager/SignInManager" as Identity
+participant "JwtTokenService" as JWT
+database "MySQL via AppDbContext" as DB
+
+Student -> Auth : POST /api/auth/login
+Auth -> Identity : FindByEmail + CheckPassword
+Identity --> Auth : Success
+Auth -> JWT : GenerateTokenAsync(user)
+JWT --> Auth : JWT token
+Auth --> Student : 200 OK (token)
+
+Student -> Jobs : POST /api/jobs/{id}/apply (Bearer token)
+Jobs -> Jobs : Validate role=Student
+Jobs -> DB : Find open job by id
+DB --> Jobs : Job found
+Jobs -> DB : Check existing application(jobId, studentId)
+DB --> Jobs : none
+Jobs -> DB : Insert JobApplication(status=submitted)
+DB --> Jobs : saved
+Jobs --> Student : 200 OK "Application submitted."
+@enduml

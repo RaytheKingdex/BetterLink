@@ -1,0 +1,52 @@
+@startuml
+skinparam componentStyle rectangle
+
+node "Client Layer" {
+  [Web Frontend]
+  [Mobile Frontend]
+}
+
+node "API Layer (.NET 8)" {
+  [Program.cs Pipeline]
+  [AuthController]
+  [UsersController]
+  [JobsController]
+  [ApplicationsController]
+  [CommunitiesController]
+}
+
+node "Application Services" {
+  [JwtTokenService]
+  [IdentitySeeder]
+}
+
+node "Data Access" {
+  [AppDbContext]
+  [ASP.NET Identity]
+}
+
+database "MySQL 8" as MySQL
+component "Swagger/OpenAPI" as Swagger
+
+[Web Frontend] --> [Program.cs Pipeline]
+[Mobile Frontend] --> [Program.cs Pipeline]
+
+[Program.cs Pipeline] --> [AuthController]
+[Program.cs Pipeline] --> [UsersController]
+[Program.cs Pipeline] --> [JobsController]
+[Program.cs Pipeline] --> [ApplicationsController]
+[Program.cs Pipeline] --> [CommunitiesController]
+[Program.cs Pipeline] --> Swagger
+
+[AuthController] --> [JwtTokenService]
+[AuthController] --> [ASP.NET Identity]
+[UsersController] --> [ASP.NET Identity]
+
+[JobsController] --> [AppDbContext]
+[ApplicationsController] --> [AppDbContext]
+[CommunitiesController] --> [AppDbContext]
+[AppDbContext] --> MySQL
+[ASP.NET Identity] --> MySQL
+
+[Program.cs Pipeline] --> [IdentitySeeder] : startup role seeding
+@enduml

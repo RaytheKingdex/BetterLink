@@ -1,0 +1,46 @@
+@startuml
+left to right direction
+
+actor Student
+actor Employer
+actor Admin
+
+rectangle BetterLink {
+  usecase "Register Student" as UC1
+  usecase "Register Employer" as UC2
+  usecase "Login" as UC3
+  usecase "View/Update My Profile" as UC4
+  usecase "Browse Jobs" as UC5
+  usecase "View Job Details" as UC6
+  usecase "Apply to Job" as UC7
+  usecase "View My Applications" as UC8
+  usecase "Create Job" as UC9
+  usecase "Create Community" as UC10
+  usecase "Join Community" as UC11
+  usecase "Post Community Message" as UC12
+  usecase "Seed Roles (Startup)" as UC13
+}
+
+Student --> UC1
+Student --> UC3
+Student --> UC4
+Student --> UC5
+Student --> UC6
+Student --> UC7
+Student --> UC8
+Student --> UC10
+Student --> UC11
+Student --> UC12
+
+Employer --> UC2
+Employer --> UC3
+Employer --> UC4
+Employer --> UC5
+Employer --> UC6
+Employer --> UC9
+Employer --> UC10
+Employer --> UC11
+Employer --> UC12
+
+Admin --> UC13
+@enduml

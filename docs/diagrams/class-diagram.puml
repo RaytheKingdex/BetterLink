@@ -1,0 +1,110 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide circle
+
+class ApplicationUser {
+  +long Id
+  +string? FirstName
+  +string? LastName
+  +DateTime CreatedAt
+}
+
+class StudentProfile {
+  +long Id
+  +long UserId
+  +string University
+  +string ProgramName
+  +int? GraduationYear
+  +decimal? Gpa
+}
+
+class EmployerProfile {
+  +long Id
+  +long UserId
+  +string OrganizationName
+  +string? Industry
+  +string? Website
+  +string? Location
+  +bool IsVerified
+}
+
+class Job {
+  +long Id
+  +long EmployerId
+  +string Title
+  +string Description
+  +string EmploymentType
+  +string Status
+  +DateTime? ApplicationDeadline
+  +DateTime PostedDate
+}
+
+class JobApplication {
+  +long Id
+  +long JobId
+  +long StudentUserId
+  +string? CoverLetter
+  +string Status
+  +DateTime AppliedAt
+}
+
+class Community {
+  +long Id
+  +string Name
+  +string? Description
+  +long CreatedByUserId
+}
+
+class CommunityMember {
+  +long Id
+  +long CommunityId
+  +long UserId
+  +string Role
+  +DateTime JoinedAt
+}
+
+class CommunityMessage {
+  +long Id
+  +long CommunityId
+  +long SenderUserId
+  +string Body
+  +DateTime CreatedAt
+}
+
+class AppDbContext
+class AuthController
+class UsersController
+class JobsController
+class ApplicationsController
+class CommunitiesController
+interface IJwtTokenService
+class JwtTokenService
+
+' Crow's foot cardinalities for persistent domain relationships.
+ApplicationUser ||--o| StudentProfile : has optional student profile
+ApplicationUser ||--o| EmployerProfile : has optional employer profile
+EmployerProfile ||--o{ Job : posts
+Job ||--o{ JobApplication : receives
+ApplicationUser ||--o{ JobApplication : submits (StudentUser)
+ApplicationUser ||--o{ Community : creates
+Community ||--o{ CommunityMember : contains
+ApplicationUser ||--o{ CommunityMember : joins as member
+Community ||--o{ CommunityMessage : contains
+ApplicationUser ||--o{ CommunityMessage : sends (SenderUser)
+
+AuthController --> IJwtTokenService
+AuthController --> AppDbContext
+UsersController --> ApplicationUser
+JobsController --> AppDbContext
+ApplicationsController --> AppDbContext
+CommunitiesController --> AppDbContext
+JwtTokenService ..|> IJwtTokenService
+
+legend right
+  || = exactly one
+  o| = zero or one
+  |{ = one or more
+  o{ = zero or more
+endlegend
+@enduml

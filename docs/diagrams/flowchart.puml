@@ -1,0 +1,30 @@
+@startuml
+start
+:Open BetterLink;
+if (Has account?) then (No)
+  if (Role?) then (Student)
+    :POST /api/auth/register/student;
+  else (Employer)
+    :POST /api/auth/register/employer;
+  endif
+endif
+
+:POST /api/auth/login;
+:Receive JWT;
+:GET /api/jobs;
+
+if (User role == Student?) then (Yes)
+  :Select job;
+  :POST /api/jobs/{id}/apply;
+  :GET /api/applications/me;
+else (No)
+  :Create posting;
+  :POST /api/jobs;
+endif
+
+:Optional community actions;
+:POST /api/communities;
+:POST /api/communities/{id}/join;
+:POST /api/communities/{id}/messages;
+stop
+@enduml
