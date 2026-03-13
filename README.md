@@ -1,32 +1,57 @@
-# BetterLink — Jamaica Career Connect
+# BetterLink
 
-BetterLink is a dual-sided platform connecting Jamaican university students with local employers. It streamlines job discovery, internship applications, and academic collaboration across institutions.
+BetterLink is a dual-sided platform connecting Jamaican university students with local employers. This repository is organized by project function to support collaborative development.
 
-## 🔧 Tech Stack
-- Backend: ASP.NET Core (C#)
-- Frontend: React (Web), Java (Android)
-- Database: MySQL / SQL Server
-- Hosting: Azure
-- Version Control: GitHub
+## Repository Structure
 
-## 📁 Repository Structure
-/docs — Proposal and roadmap
-/backend — API, auth, and business logic
-/frontend — Web and mobile clients
-/database — Schema and seed data
-/deployment — Azure and CI/CD configs
+```text
+/BETTERLINK
+|
++-- /docs
+|   +-- Project_Proposal.md
+|   +-- Development_Roadmap.md
+|   +-- Architecture_Diagram.png
+|
++-- /backend
+|   +-- Controllers/
+|   +-- Models/
+|   +-- Services/
+|   +-- Program.cs
+|   +-- Startup.cs
+|   +-- README.md
+|
++-- /frontend
+|   +-- /web
+|   +-- /mobile
+|   +-- README.md
+|
++-- /database
+|   +-- schema.sql
+|   +-- README.md
+|
++-- /deployment
+|   +-- azure-config.md
+|   +-- github-actions.yml
+|
++-- README.md
+```
 
-## 🚀 Getting Started
-1. Clone the repo  
-2. Set up backend with .NET SDK  
-3. Configure database connection  
-4. Run backend and frontend locally  
-5. Deploy to Azure
+## Folder Purpose
 
-## 📄 Documents
-- [Project Proposal](docs/Project_Proposal.md)
-- [Development Roadmap](docs/Development_Roadmap.md)
-- [Architecture Diagram](docs/Architecture_Diagram.png)
+- `docs/`: Project proposal, roadmap, and architecture assets
+- `backend/`: ASP.NET Core API source and backend architecture layers
+- `frontend/`: Web and mobile client applications
+- `database/`: Schema and database setup artifacts
+- `deployment/`: Cloud deployment and CI/CD configuration files
 
-## 📜 License
-MIT License
+## Quick Start
+
+1. Clone the repository.
+2. Review `docs/Project_Proposal.md` and `docs/Development_Roadmap.md`.
+3. Start backend setup from `backend/README.md`.
+4. Define frontend app scaffolds in `frontend/web` and `frontend/mobile`.
+5. Apply and evolve the database schema in `database/schema.sql`.
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for details.
