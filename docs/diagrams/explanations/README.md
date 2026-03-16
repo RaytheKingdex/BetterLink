@@ -3,6 +3,7 @@
 This folder contains written explanations for each PlantUML diagram in `docs/diagrams/`.
 
 ## Files
+
 - `class-diagram.md`
 - `erd.md`
 - `sequence-diagram.md`
