@@ -37,6 +37,7 @@ Open `src/api/client.js` and update `BASE_URL`:
 npm start
 
 # Android emulator directly
+# On Windows, this script also repairs adb and picks up the local Android SDK
 npm run android
 ```
 
