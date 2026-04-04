@@ -2,19 +2,30 @@
 // BetterLink Design System — Mobile
 
 export const Colors = {
-  // Brand
-  primary: '#1A56DB',       // Royal blue — trust, professionalism
-  primaryDark: '#1044B2',
-  primaryLight: '#EBF1FF',
-  accent: '#00C896',        // Jamaican-inspired teal-green
-  accentLight: '#E6FAF5',
+  // Brand — teal navbar (#0d9488) + cyan active (#00e5ff)
+  primary: '#0d9488',
+  primaryDark: '#0a7570',
+  primaryLight: '#e6f7f5',
+  accent: '#00e5ff',
+  accentLight: '#e0faff',
 
   // Neutrals
-  background: '#F5F7FA',
+  background: '#dff0e8',
   surface: '#FFFFFF',
   surfaceElevated: '#FFFFFF',
-  border: '#E4E7EC',
-  borderLight: '#F2F4F7',
+  border: '#b8d9cc',
+  borderLight: '#d0ece2',
+
+  // Glass card (caption-box style)
+  cardGlass: 'rgba(45, 136, 255, 0.55)',
+  cardGlassBorder: 'rgba(204, 87, 199, 0.22)',
+
+  // Sidebar — dark GitHub-style (#0d1117)
+  sidebarBg: '#0d1117',
+  sidebarSurface: '#161b22',
+  sidebarBorder: '#30363d',
+  sidebarText: '#e6edf3',
+  sidebarTextSecondary: '#8b949e',
 
   // Text
   textPrimary: '#101828',

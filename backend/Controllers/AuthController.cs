@@ -29,6 +29,29 @@ public class AuthController : ControllerBase
         _jwtTokenService = jwtTokenService;
     }
 
+    private async Task<string> GenerateDisplayIdAsync()
+    {
+        var year = DateTime.UtcNow.Year;
+        var prefix = year.ToString();
+
+        var existingIds = await _dbContext.Users
+            .Where(u => u.DisplayId != null && u.DisplayId.StartsWith(prefix))
+            .Select(u => u.DisplayId!)
+            .ToListAsync();
+
+        var nextSeq = 1;
+        if (existingIds.Count > 0)
+        {
+            var max = existingIds
+                .Select(id => int.TryParse(id[4..], out var n) ? n : 0)
+                .DefaultIfEmpty(0)
+                .Max();
+            nextSeq = max + 1;
+        }
+
+        return $"{year}{nextSeq:D4}";
+    }
+
     [HttpPost("register/student")]
     public async Task<ActionResult<AuthResponse>> RegisterStudent([FromBody] RegisterStudentRequest request)
     {
@@ -43,6 +66,7 @@ public class AuthController : ControllerBase
             Email = request.Email,
             FirstName = request.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
             LastName = request.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1).FirstOrDefault(),
+            DisplayId = await GenerateDisplayIdAsync(),
             EmailConfirmed = true
         };
 
@@ -73,6 +97,7 @@ public class AuthController : ControllerBase
         {
             Token = token,
             UserId = user.Id,
+            DisplayId = user.DisplayId,
             Email = user.Email ?? string.Empty,
             Role = "Student"
         });
@@ -92,6 +117,7 @@ public class AuthController : ControllerBase
             Email = request.Email,
             FirstName = request.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
             LastName = request.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1).FirstOrDefault(),
+            DisplayId = await GenerateDisplayIdAsync(),
             EmailConfirmed = true
         };
 
@@ -120,6 +146,7 @@ public class AuthController : ControllerBase
         {
             Token = token,
             UserId = user.Id,
+            DisplayId = user.DisplayId,
             Email = user.Email ?? string.Empty,
             Role = "Employer"
         });

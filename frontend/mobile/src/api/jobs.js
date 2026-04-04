@@ -41,6 +41,53 @@ export async function createJob(data) {
 }
 
 /**
+ * GET /api/jobs/mine
+ * Returns the employer's own listings with applicant counts.
+ */
+export async function getMyJobs() {
+  return apiFetch('/api/jobs/mine', {}, true);
+}
+
+/**
+ * GET /api/jobs/:id/applicants?sortBy=
+ * Returns applicants for a job (Employer only).
+ */
+export async function getJobApplicants(jobId, sortBy = 'date_desc') {
+  return apiFetch(`/api/jobs/${jobId}/applicants?sortBy=${encodeURIComponent(sortBy)}`, {}, true);
+}
+
+/**
+ * PUT /api/jobs/:id
+ * Edit an existing job listing (Employer only).
+ */
+export async function updateJob(jobId, data) {
+  return apiFetch(`/api/jobs/${jobId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }, true);
+}
+
+/**
+ * DELETE /api/jobs/:id
+ * Delete a job listing (Employer only).
+ */
+export async function deleteJob(jobId) {
+  return apiFetch(`/api/jobs/${jobId}`, { method: 'DELETE' }, true);
+}
+
+/**
+ * PUT /api/jobs/:id/applicants/:applicationId/status
+ * Accept ('accepted') or reject ('rejected') an applicant.
+ * Sending 'accepted' triggers an automated hire DM to the student.
+ */
+export async function updateApplicationStatus(jobId, applicationId, status) {
+  return apiFetch(`/api/jobs/${jobId}/applicants/${applicationId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  }, true);
+}
+
+/**
  * POST /api/jobs/:id/apply
  * Apply to a job (Student only).
  * @param {number} jobId

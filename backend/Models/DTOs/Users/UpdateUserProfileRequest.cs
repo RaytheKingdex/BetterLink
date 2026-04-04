@@ -9,4 +9,7 @@ public class UpdateUserProfileRequest
 
     [MaxLength(120)]
     public string? LastName { get; set; }
+
+    [MaxLength(500)]
+    public string? Bio { get; set; }
 }
