@@ -53,10 +53,23 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.Response.Headers.AccessControlAllowOrigin = "*";
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevPolicy", policy =>
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -98,12 +111,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+app.UseCors("DevPolicy");
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow }));
+app.MapControllers().RequireCors("DevPolicy");
+app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow })).RequireCors("DevPolicy");
 
 // Skip seeding in the test host — TestWebApplicationFactory handles it after EnsureCreated.
 if (!app.Environment.IsEnvironment("Testing"))
