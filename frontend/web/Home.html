@@ -88,7 +88,7 @@
         <div class="carousel-inner">
             <!-- Slide 1 -->
             <div class="carousel-item active">
-                <img src="img/gettyimages-481068305-612x612.jpg" alt="Student looking for a job">
+                <img src="img/betterlink-hero.svg" alt="BetterLink student and employer illustration">
                 <div class="carousel-caption">
                     <div class="caption-box">
                         <h1 class="mb-2"><strong>Looking for a Community of your Interest?</strong></h1>
@@ -191,20 +191,49 @@ function renderFeaturedJobs(jobs) {
         return;
     }
 
-    featuredJobs.innerHTML = jobs.slice(0, 3).map(job => `
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <p class="text-uppercase text-muted small mb-2">${job.employmentType || 'full-time'}</p>
-                    <h5 class="card-title">${job.title}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">${job.employerName || 'BetterLink Employer'}</h6>
-                    <p class="card-text">${job.description ? job.description.substring(0, 120) + '...' : ''}</p>
-                    <p class="mb-3"><i class="bi bi-geo-alt"></i> ${job.location || 'Remote'}</p>
-                    <a href="Jobs.html" class="btn btn-dark btn-sm">View details</a>
-                </div>
-            </div>
-        </div>
-    `).join('');
+    featuredJobs.innerHTML = '';
+
+    jobs.slice(0, 3).forEach(job => {
+        const column = document.createElement('div');
+        column.className = 'col-md-4';
+
+        const card = document.createElement('div');
+        card.className = 'card h-100 shadow-sm';
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        const employmentType = document.createElement('p');
+        employmentType.className = 'text-uppercase text-muted small mb-2';
+        employmentType.textContent = job.employmentType || 'full-time';
+
+        const title = document.createElement('h5');
+        title.className = 'card-title';
+        title.textContent = job.title || 'Untitled role';
+
+        const employer = document.createElement('h6');
+        employer.className = 'card-subtitle mb-2 text-muted';
+        employer.textContent = job.employerName || 'BetterLink Employer';
+
+        const description = document.createElement('p');
+        description.className = 'card-text';
+        description.textContent = job.description ? `${job.description.substring(0, 120)}...` : '';
+
+        const location = document.createElement('p');
+        location.className = 'mb-3';
+        location.textContent = ` ${job.location || 'Remote'}`;
+        location.prepend(Object.assign(document.createElement('i'), { className: 'bi bi-geo-alt' }));
+
+        const link = document.createElement('a');
+        link.className = 'btn btn-dark btn-sm';
+        link.href = 'Jobs.html';
+        link.textContent = 'View details';
+
+        body.append(employmentType, title, employer, description, location, link);
+        card.appendChild(body);
+        column.appendChild(card);
+        featuredJobs.appendChild(column);
+    });
 }
 
 window.addEventListener('DOMContentLoaded', async () => {

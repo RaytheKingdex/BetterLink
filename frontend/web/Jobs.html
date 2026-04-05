@@ -187,25 +187,50 @@ function loadJobs(jobsToShow) {
         return;
     }
 
-    jobs.forEach((job, index) => {
+    jobs.forEach((job) => {
         const card = document.createElement('div');
         card.className = 'job-card';
 
-        card.innerHTML = `
-            <div class="job-header">
-                <div>
-                    <h4>${job.title}</h4>
-                    <h5 class="company-name">${job.employerName || 'BetterLink Employer'}</h5>
-                </div>
-                <span class="job-type">${job.employmentType || 'full-time'}</span>
-            </div>
-            <p class="job-location"><i class="bi bi-geo-alt"></i> ${job.location}</p>
-            <p class="job-description">${job.description ? job.description.substring(0, 160) + '...' : ''}</p>
-            
-            <div class="job-footer">
-                <button class="apply-btn" onclick="applyForJob(${job.id})">Apply Now</button>
-            </div>
-        `;
+        const header = document.createElement('div');
+        header.className = 'job-header';
+
+        const left = document.createElement('div');
+
+        const title = document.createElement('h4');
+        title.textContent = job.title || 'Untitled role';
+
+        const company = document.createElement('h5');
+        company.className = 'company-name';
+        company.textContent = job.employerName || 'BetterLink Employer';
+
+        const type = document.createElement('span');
+        type.className = 'job-type';
+        type.textContent = job.employmentType || 'full-time';
+
+        left.append(title, company);
+        header.append(left, type);
+
+        const location = document.createElement('p');
+        location.className = 'job-location';
+        const geo = document.createElement('i');
+        geo.className = 'bi bi-geo-alt';
+        location.append(geo, document.createTextNode(` ${job.location || 'Remote'}`));
+
+        const description = document.createElement('p');
+        description.className = 'job-description';
+        description.textContent = job.description ? `${job.description.substring(0, 160)}...` : '';
+
+        const footer = document.createElement('div');
+        footer.className = 'job-footer';
+
+        const button = document.createElement('button');
+        button.className = 'apply-btn';
+        button.type = 'button';
+        button.textContent = 'Apply Now';
+        button.addEventListener('click', () => applyForJob(job.id));
+
+        footer.appendChild(button);
+        card.append(header, location, description, footer);
 
         jobList.appendChild(card);
     });

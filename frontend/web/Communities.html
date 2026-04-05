@@ -180,30 +180,55 @@ function loadCommunities() {
     container.innerHTML = '';
 
     communities.forEach(community => {
-        const cardHTML = `
-            <div class="col-12">
-                <div class="card h-100">
-                    <div class="card-body d-flex gap-3 p-4">
-                        <div class="community-icon">
-                            <i class="bi bi-people"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="fw-bold mb-1">${community.name}</h5>
-                                    <p class="text-muted small mb-2">
-                                            ${community.memberCount || 0} members
-                                    </p>
-                                </div>
-                                    <button class="btn join-btn btn-sm rounded-pill px-4" onclick="joinCommunity(${community.id})">Join</button>
-                            </div>
-                            <p class="mb-0">${community.description}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.innerHTML += cardHTML;
+        const column = document.createElement('div');
+        column.className = 'col-12';
+
+        const card = document.createElement('div');
+        card.className = 'card h-100';
+
+        const body = document.createElement('div');
+        body.className = 'card-body d-flex gap-3 p-4';
+
+        const icon = document.createElement('div');
+        icon.className = 'community-icon';
+        const iconElement = document.createElement('i');
+        iconElement.className = 'bi bi-people';
+        icon.appendChild(iconElement);
+
+        const content = document.createElement('div');
+        content.className = 'flex-grow-1';
+
+        const header = document.createElement('div');
+        header.className = 'd-flex justify-content-between align-items-start';
+
+        const textGroup = document.createElement('div');
+
+        const title = document.createElement('h5');
+        title.className = 'fw-bold mb-1';
+        title.textContent = community.name || 'Untitled community';
+
+        const memberCount = document.createElement('p');
+        memberCount.className = 'text-muted small mb-2';
+        memberCount.textContent = `${community.memberCount || 0} members`;
+
+        const joinButton = document.createElement('button');
+        joinButton.className = 'btn join-btn btn-sm rounded-pill px-4';
+        joinButton.type = 'button';
+        joinButton.textContent = 'Join';
+        joinButton.addEventListener('click', () => joinCommunity(community.id));
+
+        textGroup.append(title, memberCount);
+        header.append(textGroup, joinButton);
+
+        const description = document.createElement('p');
+        description.className = 'mb-0';
+        description.textContent = community.description || '';
+
+        content.append(header, description);
+        body.append(icon, content);
+        card.appendChild(body);
+        column.appendChild(card);
+        container.appendChild(column);
     });
 }
 
@@ -213,16 +238,24 @@ function loadPopularCommunities() {
     container.innerHTML = '';
 
     communities.slice(0, 5).forEach((community, index) => {
-        const item = `
-            <a href="#" class="list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center gap-3 py-3">
-                <span class="text-orange fw-bold">${index + 1}.</span>
-                <div>
-                    <strong>${community.name}</strong><br>
-                    <small class="text-muted">${community.memberCount || 0} members</small>
-                </div>
-            </a>
-        `;
-        container.innerHTML += item;
+        const item = document.createElement('a');
+        item.href = '#';
+        item.className = 'list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center gap-3 py-3';
+
+        const rank = document.createElement('span');
+        rank.className = 'text-orange fw-bold';
+        rank.textContent = `${index + 1}.`;
+
+        const details = document.createElement('div');
+        const name = document.createElement('strong');
+        name.textContent = community.name || 'Untitled community';
+        const count = document.createElement('small');
+        count.className = 'text-muted';
+        count.textContent = `${community.memberCount || 0} members`;
+
+        details.append(name, document.createElement('br'), count);
+        item.append(rank, details);
+        container.appendChild(item);
     });
 }
 
