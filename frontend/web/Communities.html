@@ -7,7 +7,8 @@
         <link rel="Stylesheet" href="CSS/Communities.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    </head>
+        <link rel="stylesheet" href="CSS/footer.css">
+</head>
     <body>
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
@@ -81,6 +82,7 @@
             <div class="col-lg-8 col-xl-7">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="fw-bold text-light mb-0">Communities</h3>
+                    <span class="badge text-bg-light d-none" id="roleBadge"></span>
                 </div>
                 <div class="alert d-none" id="communitiesStatus" role="alert"></div>
 
@@ -123,6 +125,46 @@
 </div>
 </div>
 </div>
+
+<footer class="footer">
+    <div class="container-fluid px-4 px-lg-5 py-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">BetterLink</h5>
+                <p>Your journey to success starts here.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="Home.html" class="text-light">Home</a></li>
+                    <li><a href="Communities.html" class="text-light">Communities</a></li>
+                    <li><a href="Jobs.html" class="text-light">Jobs</a></li>
+                    <li><a href="Service.html" class="text-light">Services</a></li>
+                    <li><a href="About Us.html" class="text-light">About Us</a></li>
+                    <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">Follow Us</h5>
+                <p class="mb-3">Stay connected with us on social media.</p>
+                <div class="d-flex gap-3 fs-4">
+                    <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-black py-3">
+        <div class="container-fluid px-4 px-lg-5 text-center">
+            <small>&copy; 2026 BetterLink. All rights reserved.</small>
+        </div>
+    </div>
+</footer>
 </main>
 
 <!--Post Community Area-->
@@ -166,7 +208,19 @@
 <script src="js/api.js"></script>
 <script>
 const communitiesStatus = document.getElementById('communitiesStatus');
+const roleBadge = document.getElementById('roleBadge');
 let communities = [];
+
+function renderAuthRole() {
+    const role = window.BetterLinkApi.getCurrentRole();
+    if (!role) {
+        roleBadge.classList.add('d-none');
+        return;
+    }
+
+    roleBadge.textContent = `Signed in as ${role}`;
+    roleBadge.classList.remove('d-none');
+}
 
 function showStatus(message, kind) {
     communitiesStatus.className = `alert alert-${kind}`;
@@ -214,7 +268,7 @@ function loadCommunities() {
         const joinButton = document.createElement('button');
         joinButton.className = 'btn join-btn btn-sm rounded-pill px-4';
         joinButton.type = 'button';
-        joinButton.textContent = 'Join';
+        joinButton.textContent = window.BetterLinkApi.isAuthenticated() ? 'Join' : 'Sign up to join';
         joinButton.addEventListener('click', () => joinCommunity(community.id));
 
         textGroup.append(title, memberCount);
@@ -277,8 +331,7 @@ async function createCommunity() {
     const name = document.getElementById('communityName').value.trim();
     const description = document.getElementById('communityDescription').value.trim();
 
-    if (!window.BetterLinkApi.getAuthToken()) {
-        window.location.href = 'Login.html';
+    if (!window.BetterLinkApi.requireAuth('SignUp.html')) {
         return;
     }
 
@@ -304,8 +357,7 @@ async function createCommunity() {
 }
 
 async function joinCommunity(communityId) {
-    if (!window.BetterLinkApi.getAuthToken()) {
-        window.location.href = 'Login.html';
+    if (!window.BetterLinkApi.requireAuth('SignUp.html')) {
         return;
     }
 
@@ -328,6 +380,14 @@ function setActive(btn) {
 
 // Initialize everything
 async function loadCommunityData() {
+    if (!window.BetterLinkApi.isAuthenticated()) {
+        showStatus('Sign up to create and join communities.', 'info');
+        communities = [];
+        loadCommunities();
+        loadPopularCommunities();
+        return;
+    }
+
     try {
         communities = await window.BetterLinkApi.requestJson('/api/communities?take=20');
         loadCommunities();
@@ -341,6 +401,7 @@ async function loadCommunityData() {
 }
 
 window.onload = () => {
+    renderAuthRole();
     loadCommunityData();
 };
 </script>

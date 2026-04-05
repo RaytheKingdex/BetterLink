@@ -38,6 +38,34 @@ public class CommunitiesController : ControllerBase
         _env = env;
     }
 
+    // GET /api/communities?take=20
+    [HttpGet]
+    public async Task<IActionResult> GetCommunities([FromQuery] int take = 20)
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId))
+            return Unauthorized();
+
+        var safeTake = Math.Clamp(take, 1, 100);
+
+        var communities = await _dbContext.Communities
+            .AsNoTracking()
+            .OrderByDescending(c => c.CreatedAt)
+            .Take(safeTake)
+            .Select(c => new
+            {
+                c.Id,
+                c.Name,
+                c.Description,
+                c.CreatedAt,
+                MemberCount = c.Members.Count,
+                IsMember = c.Members.Any(m => m.UserId == userId)
+            })
+            .ToListAsync();
+
+        return Ok(communities);
+    }
+
     // POST /api/communities — create + auto-join creator
     [HttpPost]
     public async Task<IActionResult> CreateCommunity([FromBody] CreateCommunityRequest request)

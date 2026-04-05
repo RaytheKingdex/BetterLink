@@ -42,6 +42,35 @@
         return localStorage.getItem('betterlinkToken') || '';
     }
 
+    function isAuthenticated() {
+        return getAuthToken() !== '';
+    }
+
+    function getCurrentRole() {
+        return localStorage.getItem('betterlinkRole') || '';
+    }
+
+    function getCurrentUserEmail() {
+        return localStorage.getItem('betterlinkUserEmail') || '';
+    }
+
+    function requireAuth(redirectUrl = 'SignUp.html') {
+        if (isAuthenticated()) {
+            return true;
+        }
+
+        window.location.href = redirectUrl;
+        return false;
+    }
+
+    function requireRole(role, redirectUrl = 'SignUp.html') {
+        if (!requireAuth(redirectUrl)) {
+            return false;
+        }
+
+        return getCurrentRole().toLowerCase() === String(role || '').toLowerCase();
+    }
+
     function setAuthSession(payload) {
         const token = payload.token || payload.Token || '';
         const role = payload.role || payload.Role || '';
@@ -115,6 +144,11 @@
     window.BetterLinkApi = {
         requestJson,
         getAuthToken,
+        isAuthenticated,
+        getCurrentRole,
+        getCurrentUserEmail,
+        requireAuth,
+        requireRole,
         setAuthSession,
         clearAuthSession,
         getApiCandidates

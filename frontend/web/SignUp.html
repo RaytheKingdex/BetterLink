@@ -105,6 +105,7 @@
             transform: translateY(-2px);
         }
     </style>
+    <link rel="stylesheet" href="CSS/footer.css">
 </head>
 <body>
 
@@ -213,6 +214,46 @@
         <div class="image-side" style="background-image: url('img/office_team.jpg');"></div>
     </div>
 </div>
+
+<footer class="footer mt-4">
+    <div class="container-fluid px-4 px-lg-5 py-5 bg-dark text-light">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">BetterLink</h5>
+                <p>Your journey to success starts here.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="Home.html" class="text-light">Home</a></li>
+                    <li><a href="Communities.html" class="text-light">Communities</a></li>
+                    <li><a href="Jobs.html" class="text-light">Jobs</a></li>
+                    <li><a href="Service.html" class="text-light">Services</a></li>
+                    <li><a href="About Us.html" class="text-light">About Us</a></li>
+                    <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">Follow Us</h5>
+                <p class="mb-3">Stay connected with us on social media.</p>
+                <div class="d-flex gap-3 fs-4">
+                    <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-black py-3 text-light">
+        <div class="container-fluid px-4 px-lg-5 text-center">
+            <small>&copy; 2026 BetterLink. All rights reserved.</small>
+        </div>
+    </div>
+</footer>
 
 <script src="js/api.js"></script>
 
@@ -336,6 +377,14 @@
     });
 
     updateRoleFields();
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (!window.BetterLinkApi.isAuthenticated()) {
+            return;
+        }
+
+        window.location.href = 'Profile.html';
+    });
 </script>
 
 </body>

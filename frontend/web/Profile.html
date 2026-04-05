@@ -7,7 +7,8 @@
         <link rel="stylesheet" href="CSS/Home.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    </head>
+        <link rel="stylesheet" href="CSS/footer.css">
+</head>
     <body>
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
@@ -25,12 +26,141 @@
             </form>
         </div>
         <div class="d-flex align-items-center gap-3">
-          <a href="Login.html" class="btn btn-outline-light rounded-pill">Login</a>
-          <a href="SignUp.html" class="btn btn-outline-light rounded-pill">Sign up</a>
+          <a href="Login.html" class="btn btn-outline-light rounded-pill" id="loginLink">Login</a>
+          <a href="SignUp.html" class="btn btn-outline-light rounded-pill" id="signupLink">Sign up</a>
+          <button type="button" id="logoutBtn" class="btn btn-outline-warning rounded-pill d-none">Logout</button>
         </div>
     </div>
 </nav>
 
+<main class="main-content container pt-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-3">My Profile</h1>
+                    <div class="alert d-none" id="profileStatus" role="alert"></div>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Signed In</dt>
+                        <dd class="col-sm-8" id="signedInValue">No</dd>
+
+                        <dt class="col-sm-4">Role</dt>
+                        <dd class="col-sm-8" id="roleValue">Not set</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8" id="emailValue">Not set</dd>
+
+                        <dt class="col-sm-4">Available Actions</dt>
+                        <dd class="col-sm-8" id="actionValue">Sign in to access role-based features.</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer mt-5">
+    <div class="container-fluid px-4 px-lg-5 py-5 bg-dark text-light">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">BetterLink</h5>
+                <p>Your journey to success starts here.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="Home.html" class="text-light">Home</a></li>
+                    <li><a href="Communities.html" class="text-light">Communities</a></li>
+                    <li><a href="Jobs.html" class="text-light">Jobs</a></li>
+                    <li><a href="Service.html" class="text-light">Services</a></li>
+                    <li><a href="About Us.html" class="text-light">About Us</a></li>
+                    <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-white">Follow Us</h5>
+                <p class="mb-3">Stay connected with us on social media.</p>
+                <div class="d-flex gap-3 fs-4">
+                    <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-black py-3 text-light">
+        <div class="container-fluid px-4 px-lg-5 text-center">
+            <small>&copy; 2026 BetterLink. All rights reserved.</small>
+        </div>
+    </div>
+</footer>
+
+<script src="js/api.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const signedInValue = document.getElementById('signedInValue');
+const roleValue = document.getElementById('roleValue');
+const emailValue = document.getElementById('emailValue');
+const actionValue = document.getElementById('actionValue');
+const profileStatus = document.getElementById('profileStatus');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginLink = document.getElementById('loginLink');
+const signupLink = document.getElementById('signupLink');
+
+function showStatus(message, kind) {
+    profileStatus.className = `alert alert-${kind}`;
+    profileStatus.textContent = message;
+    profileStatus.classList.remove('d-none');
+}
+
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('collapsed');
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const isSignedIn = window.BetterLinkApi.isAuthenticated();
+    const role = window.BetterLinkApi.getCurrentRole() || 'Not set';
+    const email = window.BetterLinkApi.getCurrentUserEmail() || 'Not set';
+
+    signedInValue.textContent = isSignedIn ? 'Yes' : 'No';
+    roleValue.textContent = role;
+    emailValue.textContent = email;
+
+    if (!isSignedIn) {
+        actionValue.textContent = 'Create an account to join communities, apply to jobs, or post jobs as an employer.';
+        showStatus('You are not signed in. Redirecting to Sign Up...', 'warning');
+        window.setTimeout(() => {
+            window.location.href = 'SignUp.html';
+        }, 1200);
+        return;
+    }
+
+    loginLink.classList.add('d-none');
+    signupLink.classList.add('d-none');
+    logoutBtn.classList.remove('d-none');
+
+    if (role === 'Employer') {
+        actionValue.innerHTML = 'You can post jobs, review applicants, and manage listings. <a href="JobPost.html">Post a job now</a>.';
+    } else {
+        actionValue.innerHTML = 'You can apply to jobs and join communities. <a href="Jobs.html">Browse jobs</a>.';
+    }
+});
+
+logoutBtn.addEventListener('click', () => {
+    window.BetterLinkApi.clearAuthSession();
+    showStatus('You have been signed out.', 'success');
+    window.setTimeout(() => {
+        window.location.href = 'Login.html';
+    }, 600);
+});
+</script>
 </body>
 </html>
