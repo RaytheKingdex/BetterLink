@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../context/AuthContext';
-import { updateMe } from '../../api/users';
+import { updateMe, deleteMe } from '../../api/users';
 import { Button, InputField, Card, Badge, LoadingSpinner } from '../../components';
 import { Colors, Radius, Spacing, Typography } from '../../theme';
 
@@ -70,6 +70,7 @@ export default function ProfileScreen() {
   const [editing, setEditing] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [bio, setBio] = useState('');
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -80,6 +81,7 @@ export default function ProfileScreen() {
     if (user) {
       setFirstName(user.firstName || '');
       setLastName(user.lastName || '');
+      setBio(user.bio || '');
     }
   }, [user]);
 
@@ -92,6 +94,7 @@ export default function ProfileScreen() {
   function startEditing() {
     setFirstName(user?.firstName || '');
     setLastName(user?.lastName || '');
+    setBio(user?.bio || '');
     setErrors({});
     setApiError('');
     setEditing(true);
@@ -117,7 +120,7 @@ export default function ProfileScreen() {
     setSaving(true);
     setApiError('');
     try {
-      await updateMe({ firstName: firstName.trim(), lastName: lastName.trim() });
+      await updateMe({ firstName: firstName.trim(), lastName: lastName.trim(), bio: bio.trim() });
       await refreshUser();
       setEditing(false);
       Alert.alert('Profile Updated', 'Your name has been saved successfully.');
@@ -128,7 +131,35 @@ export default function ProfileScreen() {
     }
   }
 
+  function confirmDeleteAccount() {
+    const doDelete = async () => {
+      try {
+        await deleteMe();
+        await signOut();
+      } catch (err) {
+        Alert.alert('Error', err.message || 'Failed to delete account.');
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm('Permanently delete your account? This cannot be undone.')) doDelete();
+      return;
+    }
+    Alert.alert(
+      'Delete Account',
+      'This will permanently delete your account and all your data. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete Forever', style: 'destructive', onPress: doDelete },
+      ]
+    );
+  }
+
   function confirmSignOut() {
+    if (Platform.OS === 'web') {
+      if (window.confirm('Are you sure you want to sign out of BetterLink?')) signOut();
+      return;
+    }
     Alert.alert(
       'Sign Out',
       'Are you sure you want to sign out of BetterLink?',
@@ -174,6 +205,7 @@ export default function ProfileScreen() {
           <InfoItem label="Email" value={user.email} />
           <InfoItem label="First Name" value={user.firstName} />
           <InfoItem label="Last Name" value={user.lastName} />
+          <InfoItem label="Bio" value={user.bio} />
           <InfoItem label="Role" value={role} />
           <InfoItem label="User ID" value={String(user.userId)} />
         </Card>
@@ -204,6 +236,15 @@ export default function ProfileScreen() {
               placeholder="Last name"
               autoCapitalize="words"
               error={errors.lastName}
+            />
+            <InputField
+              label="Bio"
+              value={bio}
+              onChangeText={setBio}
+              placeholder="Tell others a bit about yourself..."
+              multiline
+              numberOfLines={3}
+              autoCapitalize="sentences"
             />
 
             <View style={styles.editActions}>
@@ -236,6 +277,14 @@ export default function ProfileScreen() {
           onPress={confirmSignOut}
           variant="danger"
           style={styles.signOutBtn}
+        />
+
+        {/* Delete Account */}
+        <Button
+          label="Delete Account"
+          onPress={confirmDeleteAccount}
+          variant="danger"
+          style={styles.deleteAccountBtn}
         />
 
         <Text style={styles.versionText}>BetterLink Mobile v1.0</Text>
@@ -299,6 +348,7 @@ const styles = StyleSheet.create({
   roleCardTitle: { fontSize: Typography.base, fontWeight: Typography.semiBold, color: Colors.textPrimary, marginBottom: 4 },
   roleCardDesc: { fontSize: Typography.sm, color: Colors.textSecondary, lineHeight: 20 },
 
-  signOutBtn: { marginBottom: Spacing.lg },
+  signOutBtn: { marginBottom: Spacing.sm },
+  deleteAccountBtn: { marginBottom: Spacing.lg, opacity: 0.75 },
   versionText: { textAlign: 'center', fontSize: Typography.xs, color: Colors.textTertiary },
 });

@@ -3,8 +3,10 @@ namespace BetterLink.Backend.Models.DTOs.Users;
 public class UserProfileResponse
 {
     public long UserId { get; set; }
+    public string? DisplayId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
+    public string? Bio { get; set; }
     public IEnumerable<string> Roles { get; set; } = [];
 }

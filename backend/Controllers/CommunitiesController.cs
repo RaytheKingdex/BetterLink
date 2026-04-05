@@ -13,21 +13,38 @@ namespace BetterLink.Backend.Controllers;
 [Authorize]
 public class CommunitiesController : ControllerBase
 {
-    private readonly AppDbContext _dbContext;
+    private static readonly HashSet<string> AllowedImageMimes =
+        ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    private static readonly HashSet<string> AllowedVideoMimes =
+        ["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"];
+    private static readonly HashSet<string> AllowedDocMimes =
+        ["application/pdf",
+         "application/msword",
+         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+         "application/vnd.ms-excel",
+         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+         "application/vnd.ms-powerpoint",
+         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+         "text/plain"];
 
-    public CommunitiesController(AppDbContext dbContext)
+    private const long MaxFileBytes = 50 * 1024 * 1024; // 50 MB
+
+    private readonly AppDbContext _dbContext;
+    private readonly IWebHostEnvironment _env;
+
+    public CommunitiesController(AppDbContext dbContext, IWebHostEnvironment env)
     {
         _dbContext = dbContext;
+        _env = env;
     }
 
+    // POST /api/communities — create + auto-join creator
     [HttpPost]
     public async Task<IActionResult> CreateCommunity([FromBody] CreateCommunityRequest request)
     {
         var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdValue, out var userId))
-        {
             return Unauthorized();
-        }
 
         var community = new Community
         {
@@ -41,12 +58,27 @@ public class CommunitiesController : ControllerBase
         _dbContext.Communities.Add(community);
         await _dbContext.SaveChangesAsync();
 
+        // Auto-join creator as admin
+        _dbContext.CommunityMembers.Add(new CommunityMember
+        {
+            CommunityId = community.Id,
+            UserId = userId,
+            Role = "admin",
+            JoinedAt = DateTime.UtcNow
+        });
+        await _dbContext.SaveChangesAsync();
+
         return CreatedAtAction(nameof(GetCommunityById), new { id = community.Id }, new { community.Id });
     }
 
+    // GET /api/communities/:id
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetCommunityById(long id)
     {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId))
+            return Unauthorized();
+
         var community = await _dbContext.Communities
             .AsNoTracking()
             .Where(c => c.Id == id)
@@ -56,38 +88,53 @@ public class CommunitiesController : ControllerBase
                 c.Name,
                 c.Description,
                 c.CreatedAt,
-                MemberCount = c.Members.Count
+                c.CreatedByUserId,
+                MemberCount = c.Members.Count,
+                IsMember = c.Members.Any(m => m.UserId == userId),
             })
             .FirstOrDefaultAsync();
 
         if (community is null)
-        {
             return NotFound();
-        }
 
         return Ok(community);
     }
 
+    // DELETE /api/communities/:id — creator only
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> DeleteCommunity(long id)
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId))
+            return Unauthorized();
+
+        var community = await _dbContext.Communities.FirstOrDefaultAsync(c => c.Id == id);
+        if (community is null)
+            return NotFound();
+
+        if (community.CreatedByUserId != userId)
+            return Forbid();
+
+        _dbContext.Communities.Remove(community);
+        await _dbContext.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // POST /api/communities/:id/join
     [HttpPost("{id:long}/join")]
     public async Task<IActionResult> JoinCommunity(long id)
     {
         var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdValue, out var userId))
-        {
             return Unauthorized();
-        }
 
         var exists = await _dbContext.Communities.AnyAsync(c => c.Id == id);
         if (!exists)
-        {
             return NotFound("Community not found.");
-        }
 
         var alreadyMember = await _dbContext.CommunityMembers.AnyAsync(cm => cm.CommunityId == id && cm.UserId == userId);
         if (alreadyMember)
-        {
             return Conflict("You are already a member of this community.");
-        }
 
         _dbContext.CommunityMembers.Add(new CommunityMember
         {
@@ -101,61 +148,109 @@ public class CommunitiesController : ControllerBase
         return Ok(new { message = "Joined community." });
     }
 
-            [AllowAnonymous]
-            [HttpGet]
-            public async Task<IActionResult> GetCommunities([FromQuery] string? search = null, [FromQuery] int take = 20)
-            {
-                take = Math.Clamp(take, 1, 100);
-
-                var query = _dbContext.Communities
-                    .AsNoTracking();
-
-                if (!string.IsNullOrWhiteSpace(search))
-                {
-                    query = query.Where(c => c.Name.Contains(search) || (c.Description != null && c.Description.Contains(search)));
-                }
-
-                var communities = await query
-                    .OrderByDescending(c => c.CreatedAt)
-                    .Take(take)
-                    .Select(c => new
-                    {
-                        c.Id,
-                        c.Name,
-                        c.Description,
-                        c.CreatedAt,
-                        MemberCount = c.Members.Count
-                    })
-                    .ToListAsync();
-
-                return Ok(communities);
-            }
-
-            [AllowAnonymous]
     [HttpPost("{id:long}/messages")]
-    public async Task<IActionResult> CreateMessage(long id, [FromBody] CreateCommunityMessageRequest request)
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(60 * 1024 * 1024)]
+    public async Task<IActionResult> CreateMessage(long id, [FromForm] string? body, IFormFile? attachment)
     {
         var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!long.TryParse(userIdValue, out var userId))
-        {
             return Unauthorized();
-        }
 
-        var isMember = await _dbContext.CommunityMembers.AnyAsync(cm => cm.CommunityId == id && cm.UserId == userId);
+        var isMember = await _dbContext.CommunityMembers
+            .AnyAsync(cm => cm.CommunityId == id && cm.UserId == userId);
         if (!isMember)
-        {
             return Forbid();
+
+        var trimmedBody = body?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(trimmedBody) && attachment is null)
+            return BadRequest("Message must have text or an attachment.");
+
+        string? attachUrl = null, attachType = null, attachMime = null, attachName = null;
+
+        if (attachment is not null)
+        {
+            if (attachment.Length > MaxFileBytes)
+                return BadRequest("File exceeds the 50 MB limit.");
+
+            var mime = attachment.ContentType.ToLowerInvariant();
+            if (AllowedImageMimes.Contains(mime))
+                attachType = "image";
+            else if (AllowedVideoMimes.Contains(mime))
+                attachType = "video";
+            else if (AllowedDocMimes.Contains(mime))
+                attachType = "document";
+            else
+                return BadRequest($"Unsupported file type: {mime}.");
+
+            var webRoot = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadDir = Path.Combine(webRoot, "uploads", "community", id.ToString());
+            Directory.CreateDirectory(uploadDir);
+
+            var ext = Path.GetExtension(attachment.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext)) ext = ".bin";
+            var uniqueName = $"{Guid.NewGuid():N}{ext}";
+            var filePath = Path.Combine(uploadDir, uniqueName);
+
+            await using (var stream = System.IO.File.Create(filePath))
+                await attachment.CopyToAsync(stream);
+
+            attachUrl = $"/uploads/community/{id}/{uniqueName}";
+            attachMime = mime;
+            attachName = attachment.FileName;
         }
 
-        _dbContext.CommunityMessages.Add(new CommunityMessage
+        var message = new CommunityMessage
         {
             CommunityId = id,
             SenderUserId = userId,
-            Body = request.Body,
-            CreatedAt = DateTime.UtcNow
-        });
+            Body = trimmedBody,
+            AttachmentUrl = attachUrl,
+            AttachmentType = attachType,
+            AttachmentMimeType = attachMime,
+            AttachmentName = attachName,
+            CreatedAt = DateTime.UtcNow,
+        };
 
+        _dbContext.CommunityMessages.Add(message);
         await _dbContext.SaveChangesAsync();
-        return Ok(new { message = "Message posted." });
+
+        var sender = await _dbContext.Users.FindAsync(userId);
+
+        return Ok(new CommunityMessageItem
+        {
+            Id = message.Id,
+            SenderUserId = userId,
+            SenderFirstName = sender?.FirstName ?? string.Empty,
+            SenderLastName = sender?.LastName ?? string.Empty,
+            Body = message.Body,
+            AttachmentUrl = attachUrl,
+            AttachmentType = attachType,
+            AttachmentMimeType = attachMime,
+            AttachmentName = attachName,
+            CreatedAt = message.CreatedAt,
+        });
+    }
+
+    // DELETE /api/communities/:id/messages/:msgId — sender only
+    [HttpDelete("{id:long}/messages/{msgId:long}")]
+    public async Task<IActionResult> DeleteMessage(long id, long msgId)
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId))
+            return Unauthorized();
+
+        var message = await _dbContext.CommunityMessages
+            .FirstOrDefaultAsync(m => m.Id == msgId && m.CommunityId == id);
+
+        if (message is null)
+            return NotFound("Message not found.");
+
+        if (message.SenderUserId != userId)
+            return Forbid();
+
+        _dbContext.CommunityMessages.Remove(message);
+        await _dbContext.SaveChangesAsync();
+        return NoContent();
     }
 }

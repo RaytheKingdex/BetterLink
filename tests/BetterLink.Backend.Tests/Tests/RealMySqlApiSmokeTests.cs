@@ -3,6 +3,7 @@ using BetterLink.Backend.Tests.Helpers;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace BetterLink.Backend.Tests.Tests;
@@ -51,17 +52,31 @@ public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
         var studentAuth = await studentResp.Content.ReadFromJsonAsync<AuthResponse>();
         Assert.NotNull(studentAuth);
 
+        // Login employer
+        var employerLoginResp = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            email = employerEmail,
+            password = "Test1234!"
+        });
+        Assert.Equal(HttpStatusCode.OK, employerLoginResp.StatusCode);
+        var employerLoginAuth = await employerLoginResp.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(employerLoginAuth);
+        Assert.False(string.IsNullOrEmpty(employerLoginAuth.Token));
+
         // Login student
-        var loginResp = await _client.PostAsJsonAsync("/api/auth/login", new
+        var studentLoginResp = await _client.PostAsJsonAsync("/api/auth/login", new
         {
             email = studentEmail,
             password = "Test1234!"
         });
-        Assert.Equal(HttpStatusCode.OK, loginResp.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, studentLoginResp.StatusCode);
+        var studentLoginAuth = await studentLoginResp.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(studentLoginAuth);
+        Assert.False(string.IsNullOrEmpty(studentLoginAuth.Token));
 
         // Employer creates job
         _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", employerAuth!.Token);
+            new AuthenticationHeaderValue("Bearer", employerLoginAuth.Token);
         var jobCreateResp = await _client.PostAsJsonAsync("/api/jobs", new
         {
             title = "MySQL Backend Role",
@@ -81,7 +96,7 @@ public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
 
         // Student gets/updates profile
         _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", studentAuth!.Token);
+            new AuthenticationHeaderValue("Bearer", studentLoginAuth.Token);
         var meResp = await _client.GetAsync("/api/users/me");
         Assert.Equal(HttpStatusCode.OK, meResp.StatusCode);
         var updateResp = await _client.PutAsJsonAsync("/api/users/me", new
@@ -102,7 +117,7 @@ public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
 
         // Community create (as employer), join + message (as student)
         _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", employerAuth.Token);
+            new AuthenticationHeaderValue("Bearer", employerLoginAuth.Token);
         var communityResp = await _client.PostAsJsonAsync("/api/communities", new
         {
             name = "MySQL Test Community",
@@ -113,8 +128,8 @@ public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
         var communityId = createdCommunity.GetProperty("id").GetInt64();
 
         _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", studentAuth.Token);
-        var joinResp = await _client.PostAsync($"/api/communities/{communityId}/join", content: null);
+            new AuthenticationHeaderValue("Bearer", studentLoginAuth.Token);
+        var joinResp = await _client.PostAsync($"/api/communities/{communityId}/join", new StringContent("{}", Encoding.UTF8, "application/json"));
         Assert.Equal(HttpStatusCode.OK, joinResp.StatusCode);
         var messageResp = await _client.PostAsJsonAsync($"/api/communities/{communityId}/messages", new
         {

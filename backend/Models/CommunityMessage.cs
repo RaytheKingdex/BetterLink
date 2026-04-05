@@ -10,5 +10,9 @@ public class CommunityMessage
     public ApplicationUser Sender { get; set; } = null!;
 
     public string Body { get; set; } = string.Empty;
+    public string? AttachmentUrl { get; set; }
+    public string? AttachmentType { get; set; }   // "image" | "video" | "document"
+    public string? AttachmentMimeType { get; set; }
+    public string? AttachmentName { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

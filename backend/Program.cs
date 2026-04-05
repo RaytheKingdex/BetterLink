@@ -62,6 +62,14 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.Response.Headers.AccessControlAllowOrigin = "*";
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -75,6 +83,11 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevPolicy", policy =>
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -124,20 +137,7 @@ if (!app.Environment.IsDevelopment())
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGet("/", (IWebHostEnvironment environment) =>
-{
-    if (environment.IsDevelopment())
-    {
-        return Results.Redirect("/swagger");
-    }
 
-    return Results.Ok(new
-    {
-        message = "BetterLink API is running.",
-        health = "/health",
-        swagger = environment.IsDevelopment() ? "/swagger" : null
-    });
-});
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow }));
 
