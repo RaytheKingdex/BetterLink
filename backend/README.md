@@ -26,6 +26,11 @@ This folder contains the BetterLink API implementation. The backend is designed 
 - MySQL 8+ (or SQL Server)
 - Git
 
+### MySQL note for local development and tests
+
+- Development mode can run without MySQL when `UseInMemoryDatabase=true` in `appsettings.Development.json`.
+- The integration test `RealMySqlApiSmokeTests` requires a reachable MySQL test database at `127.0.0.1:33306`.
+
 > **Windows PATH note:** Windows may ship with a 32-bit (x86) `dotnet` runtime in
 > `C:\Program Files (x86)\dotnet\` that contains **no SDK** and appears first in PATH.
 > After installing the x64 SDK, verify the right `dotnet` is on your PATH:

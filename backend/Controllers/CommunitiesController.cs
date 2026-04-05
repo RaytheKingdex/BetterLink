@@ -101,6 +101,37 @@ public class CommunitiesController : ControllerBase
         return Ok(new { message = "Joined community." });
     }
 
+            [AllowAnonymous]
+            [HttpGet]
+            public async Task<IActionResult> GetCommunities([FromQuery] string? search = null, [FromQuery] int take = 20)
+            {
+                take = Math.Clamp(take, 1, 100);
+
+                var query = _dbContext.Communities
+                    .AsNoTracking();
+
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    query = query.Where(c => c.Name.Contains(search) || (c.Description != null && c.Description.Contains(search)));
+                }
+
+                var communities = await query
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Take(take)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Name,
+                        c.Description,
+                        c.CreatedAt,
+                        MemberCount = c.Members.Count
+                    })
+                    .ToListAsync();
+
+                return Ok(communities);
+            }
+
+            [AllowAnonymous]
     [HttpPost("{id:long}/messages")]
     public async Task<IActionResult> CreateMessage(long id, [FromBody] CreateCommunityMessageRequest request)
     {

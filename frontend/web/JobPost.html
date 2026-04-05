@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job - BetterLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="text-center mb-4">Post a New Job</h1>
+            <div class="alert d-none" id="jobPostStatus" role="alert"></div>
+
+            <form id="postJobForm">
+                <div class="mb-3">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" class="form-control" id="jobTitle" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Application Deadline</label>
+                    <input type="date" class="form-control" id="applicationDeadline">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" placeholder="e.g. New York, USA or Remote" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Job Type</label>
+                    <select class="form-select" id="jobType">
+                        <option value="Full-Time">Full-Time</option>
+                        <option value="Part-Time">Part-Time</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Contract">Contract</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Job Description</label>
+                    <textarea class="form-control" id="jobDescription" rows="6" required></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">Post Job</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+
+<script>
+const jobPostStatus = document.getElementById('jobPostStatus');
+
+function showStatus(message, kind) {
+    jobPostStatus.className = `alert alert-${kind}`;
+    jobPostStatus.textContent = message;
+    jobPostStatus.classList.remove('d-none');
+}
+
+document.getElementById('postJobForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const jobData = {
+        title: document.getElementById('jobTitle').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        employmentType: document.getElementById('jobType').value.toLowerCase(),
+        description: document.getElementById('jobDescription').value.trim()
+    };
+
+    const deadline = document.getElementById('applicationDeadline').value;
+    if (deadline) {
+        jobData.applicationDeadline = `${deadline}T00:00:00.000Z`;
+    }
+
+    if (window.BetterLinkApi.getAuthToken() === '') {
+        showStatus('Please log in as an employer before posting a job.', 'danger');
+        return;
+    }
+
+    if ((localStorage.getItem('betterlinkRole') || '') !== 'Employer') {
+        showStatus('Only employer accounts can post jobs.', 'danger');
+        return;
+    }
+
+    try {
+        await window.BetterLinkApi.requestJson('/api/jobs', {
+            method: 'POST',
+            body: JSON.stringify(jobData)
+        });
+
+        showStatus('Job posted successfully.', 'success');
+        window.location.href = 'Jobs.html';
+    } catch (error) {
+        showStatus(error.message || 'Job posting failed. Please try again.', 'danger');
+    }
+});
+</script>
+
+</body>
+</html>

@@ -65,6 +65,15 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -111,9 +120,24 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/", (IWebHostEnvironment environment) =>
+{
+    if (environment.IsDevelopment())
+    {
+        return Results.Redirect("/swagger");
+    }
 
+    return Results.Ok(new
+    {
+        message = "BetterLink API is running.",
+        health = "/health",
+        swagger = environment.IsDevelopment() ? "/swagger" : null
+    });
+});
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow }));
 

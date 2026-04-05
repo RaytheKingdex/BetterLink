@@ -83,6 +83,9 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.card}>
           <Text style={styles.heading}>Welcome back</Text>
           <Text style={styles.subHeading}>Sign in to your account</Text>
+          <Text style={styles.demoHint}>
+            Demo student: student.demo@betterlink.local / Password1
+          </Text>
 
           {apiError ? (
             <View style={styles.apiBanner}>
@@ -199,6 +202,12 @@ const styles = StyleSheet.create({
     fontSize: Typography.base,
     color: Colors.textSecondary,
     marginBottom: Spacing.xl,
+  },
+  demoHint: {
+    fontSize: Typography.sm,
+    color: Colors.textTertiary,
+    marginTop: -Spacing.md,
+    marginBottom: Spacing.md,
   },
   apiBanner: {
     backgroundColor: Colors.errorLight,

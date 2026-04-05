@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace BetterLink.Backend.Tests.Tests;
 
+[Trait("Category", "MySqlIntegration")]
 public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
 {
     private readonly HttpClient _client;

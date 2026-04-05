@@ -9,14 +9,16 @@ Jamaica's student-employer networking and job-matching app.
 
 ### Prerequisites
 
-- Node.js 18+
-- Expo CLI: `npm install -g expo-cli`
+- Node.js 18+ (Node 20+ recommended)
+- npm 9+
+- Use the project-local Expo CLI via `npx expo` (avoid legacy global `expo-cli`)
 - Expo Go app on your Android device **or** Android Studio emulator
+- For Android emulator/device debugging from terminal: Android SDK platform-tools (`adb` on PATH)
 
 ### Install
 
 ```bash
-cd BetterLinkMobile
+cd frontend/mobile
 npm install
 ```
 
@@ -39,6 +41,13 @@ npm start
 # Android emulator directly
 # On Windows, this script also repairs adb and picks up the local Android SDK
 npm run android
+```
+
+### Sanity Check
+
+```bash
+npx expo --version
+npx expo config --type public
 ```
 
 ---
@@ -127,7 +136,7 @@ BetterLinkMobile/
 
 | Concern          | Choice                              |
 |------------------|-------------------------------------|
-| Framework        | React Native (Expo SDK 50)          |
+| Framework        | React Native (Expo SDK 51)          |
 | Navigation       | React Navigation 6 (Stack + Tabs)   |
 | Token storage    | expo-secure-store (encrypted)       |
 | State            | React Context + hooks               |
