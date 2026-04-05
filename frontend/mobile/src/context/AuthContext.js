@@ -18,9 +18,9 @@ const AuthContext = createContext(null);
 // ─── Provider ──────────────────────────────────────────────────────────────────
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);   // { userId, email, firstName, lastName, roles }
-  const [role, setRole] = useState(null);   // 'Student' | 'Employer'
-  const [isLoading, setIsLoading] = useState(true); // bootstrapping
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // On mount: restore session from SecureStore
   useEffect(() => {

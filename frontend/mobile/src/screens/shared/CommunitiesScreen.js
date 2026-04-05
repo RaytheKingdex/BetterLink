@@ -1,7 +1,7 @@
 // src/screens/shared/CommunitiesScreen.js
 // BetterLink — Communities Hub
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -11,13 +11,104 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { createCommunity, getCommunityById, joinCommunity } from '../../api/communities';
+import { createCommunity, getCommunityById, joinCommunity, searchCommunities } from '../../api/communities';
 import { Button, InputField, Card } from '../../components';
 import { Colors, Radius, Spacing, Typography } from '../../theme';
+
+// ─── Search by Name Panel ─────────────────────────────────────────────────────
+function SearchPanel({ onFound }) {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [joining, setJoining] = useState(null);
+  const timeout = useRef(null);
+
+  useEffect(() => {
+    if (query.length < 2) { setResults([]); return; }
+    clearTimeout(timeout.current);
+    timeout.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const data = await searchCommunities(query);
+        setResults(data);
+      } catch { setResults([]); }
+      finally { setSearching(false); }
+    }, 400);
+    return () => clearTimeout(timeout.current);
+  }, [query]);
+
+  async function handleJoin(community) {
+    setJoining(community.id);
+    try {
+      await joinCommunity(community.id);
+      Alert.alert('Joined! 🎉', `You joined ${community.name}.`, [
+        { text: 'Open', onPress: () => onFound(community.id, community.name) },
+        { text: 'OK' },
+      ]);
+    } catch (err) {
+      if (err.status === 409) {
+        onFound(community.id, community.name);
+      } else {
+        Alert.alert('Error', err.message || 'Failed to join.');
+      }
+    } finally { setJoining(null); }
+  }
+
+  return (
+    <View style={styles.searchPanel}>
+      <Text style={styles.panelHeading}>Search Communities</Text>
+      <View style={styles.searchBox}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search by name..."
+          placeholderTextColor={Colors.textTertiary}
+          autoCapitalize="none"
+          returnKeyType="search"
+        />
+        {query.length > 0 && (
+          <TouchableOpacity onPress={() => { setQuery(''); setResults([]); }}>
+            <Text style={styles.searchClear}>✕</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {searching && <Text style={styles.searchStatus}>Searching...</Text>}
+
+      {!searching && query.length >= 2 && results.length === 0 && (
+        <Text style={styles.searchStatus}>No communities found.</Text>
+      )}
+
+      {results.map((c) => (
+        <View key={c.id} style={styles.searchResult}>
+          <View style={styles.communityIcon}>
+            <Text style={styles.communityIconText}>{(c.name || '#')[0].toUpperCase()}</Text>
+          </View>
+          <View style={styles.searchResultInfo}>
+            <Text style={styles.communityName}>{c.name}</Text>
+            <Text style={styles.memberCount}>{c.memberCount} member{c.memberCount !== 1 ? 's' : ''}</Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.joinBtn, joining === c.id && styles.joinBtnDisabled]}
+            onPress={() => handleJoin(c)}
+            disabled={joining === c.id}
+          >
+            <Text style={styles.joinBtnText}>{joining === c.id ? '...' : 'Join'}</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+SearchPanel.propTypes = { onFound: PropTypes.func.isRequired };
 
 // ─── Quick Lookup Panel ───────────────────────────────────────────────────────
 function LookupPanel({ onFound }) {
@@ -50,13 +141,13 @@ function LookupPanel({ onFound }) {
     try {
       await joinCommunity(communityId);
       Alert.alert('Joined! 🎉', 'You are now a member of this community.', [
-        { text: 'Go to Community', onPress: () => onFound(communityId) },
+        { text: 'Go to Community', onPress: () => onFound(result.id, result.name) },
         { text: 'Stay Here' },
       ]);
     } catch (err) {
       if (err.status === 409) {
         Alert.alert('Already a Member', 'You are already in this community.', [
-          { text: 'Go to Community', onPress: () => onFound(communityId) },
+          { text: 'Go to Community', onPress: () => onFound(result.id, result.name) },
           { text: 'OK' },
         ]);
       } else {
@@ -115,7 +206,7 @@ function LookupPanel({ onFound }) {
             />
             <Button
               label="Open"
-              onPress={() => onFound(result.id)}
+              onPress={() => onFound(result.id, result.name)}
               variant="outline"
               style={{ flex: 1 }}
             />
@@ -153,7 +244,7 @@ function CreateCommunityModal({ visible, onClose, onCreate }) {
     setApiError('');
     try {
       const res = await createCommunity({ name: name.trim(), description: description.trim() });
-      onCreate(res.id || res?.id);
+      onCreate(res.id || res?.id, name.trim());
       setName('');
       setDescription('');
       onClose();
@@ -240,20 +331,29 @@ CreateCommunityModal.propTypes = {
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function CommunitiesScreen({ navigation }) {
   const [showCreate, setShowCreate] = useState(false);
-  const [recentIds, setRecentIds] = useState([]);
+  const [recentCommunities, setRecentCommunities] = useState([]);
 
-  function handleFound(id) {
+  function handleFound(id, name) {
     navigation.navigate('CommunityDetail', { communityId: id });
+    if (id) {
+      setRecentCommunities((prev) => [
+        { id, name: name || `Community #${id}` },
+        ...prev.filter((x) => x.id !== id),
+      ]);
+    }
   }
 
-  function handleCreated(id) {
+  function handleCreated(id, name) {
     if (id) {
-      setRecentIds((prev) => [id, ...prev.filter((x) => x !== id)]);
+      setRecentCommunities((prev) => [
+        { id, name: name || `Community #${id}` },
+        ...prev.filter((x) => x.id !== id),
+      ]);
       Alert.alert(
         'Community Created!',
         `Your community is live. Share its ID (${id}) so others can join.`,
         [
-          { text: 'Open Community', onPress: () => handleFound(id) },
+          { text: 'Open Community', onPress: () => handleFound(id, name) },
           { text: 'OK' },
         ]
       );
@@ -290,23 +390,28 @@ export default function CommunitiesScreen({ navigation }) {
           />
         </Card>
 
-        {/* Lookup */}
+        {/* Search by name */}
+        <SearchPanel onFound={handleFound} />
+
+        {/* Lookup by ID */}
         <LookupPanel onFound={handleFound} />
 
         {/* Recent communities */}
-        {recentIds.length > 0 && (
+        {recentCommunities.length > 0 && (
           <View style={styles.recentSection}>
             <Text style={styles.recentHeading}>Recently Visited</Text>
-            {recentIds.map((id) => (
+            {recentCommunities.map((community) => (
               <TouchableOpacity
-                key={id}
+                key={community.id}
                 style={styles.recentItem}
-                onPress={() => handleFound(id)}
+                onPress={() => handleFound(community.id, community.name)}
               >
                 <View style={styles.recentIcon}>
-                  <Text style={styles.recentIconText}>#</Text>
+                  <Text style={styles.recentIconText}>
+                    {(community.name || '#')[0].toUpperCase()}
+                  </Text>
                 </View>
-                <Text style={styles.recentText}>Community #{id}</Text>
+                <Text style={styles.recentText}>{community.name}</Text>
                 <Text style={styles.recentArrow}>→</Text>
               </TouchableOpacity>
             ))}
@@ -349,6 +454,50 @@ const styles = StyleSheet.create({
   createHeading: { fontSize: Typography.md, fontWeight: Typography.bold, color: Colors.textPrimary, marginBottom: 4 },
   createDesc: { fontSize: Typography.sm, color: Colors.textSecondary, marginBottom: Spacing.md, lineHeight: 20 },
   createBtn: {},
+
+  // Search Panel
+  searchPanel: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.lg,
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: Spacing.base,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  searchIcon: { fontSize: 14 },
+  searchInput: { flex: 1, fontSize: Typography.sm, color: Colors.textPrimary, paddingVertical: 0 },
+  searchClear: { fontSize: 13, color: Colors.textTertiary, paddingHorizontal: 4 },
+  searchStatus: { fontSize: Typography.sm, color: Colors.textTertiary, fontStyle: 'italic', paddingVertical: Spacing.sm },
+  searchResult: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    borderTopWidth: 1,
+    borderColor: Colors.borderLight,
+    gap: Spacing.sm,
+  },
+  searchResultInfo: { flex: 1, minWidth: 0 },
+  joinBtn: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    borderRadius: Radius.full,
+  },
+  joinBtnDisabled: { opacity: 0.5 },
+  joinBtnText: { color: '#fff', fontSize: Typography.xs, fontWeight: Typography.semiBold },
 
   // Lookup Panel
   lookupPanel: {

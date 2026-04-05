@@ -38,6 +38,15 @@ export default function PostJobScreen({ navigation }) {
     setApiError('');
   }
 
+  function handleDateChange(raw) {
+    // Strip non-digits then auto-insert dashes: YYYY-MM-DD
+    const digits = raw.replace(/\D/g, '').slice(0, 8);
+    let formatted = digits;
+    if (digits.length > 4) formatted = digits.slice(0, 4) + '-' + digits.slice(4);
+    if (digits.length > 6) formatted = digits.slice(0, 4) + '-' + digits.slice(4, 6) + '-' + digits.slice(6);
+    setField('applicationDeadline', formatted);
+  }
+
   function validate() {
     const errs = {};
     if (!form.title.trim()) errs.title = 'Job title is required.';
@@ -62,13 +71,13 @@ export default function PostJobScreen({ navigation }) {
         description: form.description.trim(),
         location: form.location.trim(),
         employmentType: form.employmentType,
-        ...(form.applicationDeadline ? { applicationDeadline: form.applicationDeadline } : {}),
+        ...(form.applicationDeadline ? { applicationDeadline: form.applicationDeadline + 'T00:00:00' } : {}),
       };
       await createJob(payload);
       Alert.alert(
         'Job Posted! 🎉',
         'Your job listing is now live and visible to students.',
-        [{ text: 'Great!', onPress: () => navigation.navigate('Jobs') }]
+        [{ text: 'Great!', onPress: () => navigation.navigate('Feed') }]
       );
       setForm({ title: '', description: '', location: '', employmentType: 'full-time', applicationDeadline: '' });
     } catch (err) {
@@ -152,9 +161,9 @@ export default function PostJobScreen({ navigation }) {
           <InputField
             label="Application Deadline"
             value={form.applicationDeadline}
-            onChangeText={(v) => setField('applicationDeadline', v)}
+            onChangeText={handleDateChange}
             placeholder="YYYY-MM-DD (optional)"
-            keyboardType="numbers-and-punctuation"
+            keyboardType="number-pad"
             autoCapitalize="none"
             error={errors.applicationDeadline}
           />
