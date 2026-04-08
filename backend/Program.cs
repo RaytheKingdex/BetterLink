@@ -128,8 +128,8 @@ app.UseCors("DevPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers().RequireCors("DevPolicy");
-app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow })).RequireCors("DevPolicy");
+app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow }));
 
 // Skip seeding in the test host — TestWebApplicationFactory handles it after EnsureCreated.
 if (!app.Environment.IsEnvironment("Testing"))
