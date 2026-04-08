@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BetterLink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var path = (Context?.Request?.Path.Value ?? string.Empty).ToLowerInvariant();
+        var isHome = path == "/";
+        var isCommunities = path.StartsWith("/communities");
+        var isJobs = path.StartsWith("/jobs");
+        var isServices = path.StartsWith("/services");
+        var isAbout = path.StartsWith("/about");
+        var isContact = path.StartsWith("/contact");
+    }
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-3 px-lg-4">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link text-light me-2" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+                <a class="navbar-brand fw-bold text-light" href="/">BetterLink</a>
+            </div>
+
+            <div class="mx-auto d-none d-lg-block" style="max-width: 600px; width: 100%;">
+                <form class="d-flex" action="/jobs" method="get">
+                    <input class="form-control rounded-pill me-2" type="search" placeholder="Search jobs and communities" name="q" />
+                    <button class="btn btn-outline-light rounded-pill" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="/profile" class="btn btn-outline-light rounded-pill">Profile</a>
+                    <form method="post" action="/account/logout" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-light rounded-pill">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a href="/account/login" class="btn btn-outline-light rounded-pill">Login</a>
+                    <a href="/account/register/student" class="btn btn-outline-light rounded-pill">Sign up</a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <aside class="sidebar" id="sidebar">
+        <ul class="nav flex-column pt-3">
+            <li class="nav-item">
+                <a class="nav-link @(isHome ? "active" : string.Empty)" href="/">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span class="sidebar-text">Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(isCommunities ? "active" : string.Empty)" href="/communities">
+                    <i class="bi bi-people-fill"></i>
+                    <span class="sidebar-text">Communities</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(isJobs ? "active" : string.Empty)" href="/jobs">
+                    <i class="bi bi-briefcase-fill"></i>
+                    <span class="sidebar-text">Jobs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(isServices ? "active" : string.Empty)" href="/services">
+                    <i class="bi bi-gear-fill"></i>
+                    <span class="sidebar-text">Services</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(isAbout ? "active" : string.Empty)" href="/about">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span class="sidebar-text">About Us</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(isContact ? "active" : string.Empty)" href="/contact">
+                    <i class="bi bi-telephone-fill"></i>
+                    <span class="sidebar-text">Contact Us</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    @{ var mainClass = ViewData["MainClass"] as string ?? "container py-4"; }
+    <main class="app-main @mainClass" id="appMain">
+        @RenderBody()
+    </main>
+
+    <footer class="footer app-footer" id="appFooter">
+        <div class="container-fluid px-4 px-lg-5 py-5">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold text-white">BetterLink</h5>
+                    <p>Your journey to success starts here.</p>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold text-white">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-light">Home</a></li>
+                        <li><a href="/communities" class="text-light">Communities</a></li>
+                        <li><a href="/jobs" class="text-light">Jobs</a></li>
+                        <li><a href="/services" class="text-light">Services</a></li>
+                        <li><a href="/about" class="text-light">About Us</a></li>
+                        <li><a href="/contact" class="text-light">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold text-white">Follow Us</h5>
+                    <p class="mb-3">Stay connected with us on social media.</p>
+                    <div class="d-flex gap-3 fs-4">
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="text-light" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="text-light" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="text-light" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" class="text-light" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-black py-3">
+            <div class="container-fluid px-4 px-lg-5 text-center">
+                <small>&copy; 2026 BetterLink. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            const toggleButton = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const appMain = document.getElementById('appMain');
+            const appFooter = document.getElementById('appFooter');
+
+            if (!toggleButton || !sidebar || !appMain || !appFooter) {
+                return;
+            }
+
+            toggleButton.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                appMain.classList.toggle('collapsed');
+                appFooter.classList.toggle('collapsed');
+            });
+        })();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

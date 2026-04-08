@@ -1,0 +1,74 @@
+@model RegisterStudentViewModel
+@{
+    ViewData["Title"] = "Student Registration";
+}
+
+<h1 class="h3 mb-3">Create Student Account</h1>
+
+<form method="post" action="/account/register/student" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="col-md-6">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="University" class="form-label"></label>
+        <input asp-for="University" class="form-control" />
+        <span asp-validation-for="University" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="ProgramName" class="form-label"></label>
+        <input asp-for="ProgramName" class="form-control" />
+        <span asp-validation-for="ProgramName" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="GraduationYear" class="form-label"></label>
+        <input asp-for="GraduationYear" class="form-control" />
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="Gpa" class="form-label"></label>
+        <input asp-for="Gpa" class="form-control" />
+    </div>
+
+    <div class="col-md-12">
+        <label asp-for="Skills" class="form-label"></label>
+        <input asp-for="Skills" class="form-control" />
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="ResumeUrl" class="form-label"></label>
+        <input asp-for="ResumeUrl" class="form-control" />
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="PortfolioUrl" class="form-label"></label>
+        <input asp-for="PortfolioUrl" class="form-control" />
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Register Student</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

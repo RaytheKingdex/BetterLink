@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">BetterLink Hero Illustration</title>
+  <desc id="desc">Abstract geometric illustration for the BetterLink home page.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10233f"/>
+      <stop offset="55%" stop-color="#1f4d6b"/>
+      <stop offset="100%" stop-color="#9b5c2e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4d35e"/>
+      <stop offset="100%" stop-color="#f7f0dc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1220" cy="180" r="240" fill="#ffffff" opacity="0.08"/>
+  <circle cx="300" cy="760" r="280" fill="#f4d35e" opacity="0.08"/>
+  <path d="M180 610C390 420 590 360 790 370c220 11 380 110 650 16" fill="none" stroke="url(#accent)" stroke-width="24" stroke-linecap="round" opacity="0.35"/>
+  <rect x="270" y="260" width="520" height="320" rx="28" fill="#fff" opacity="0.12"/>
+  <rect x="360" y="330" width="150" height="24" rx="12" fill="#fff" opacity="0.8"/>
+  <rect x="360" y="376" width="310" height="16" rx="8" fill="#fff" opacity="0.55"/>
+  <rect x="360" y="410" width="250" height="16" rx="8" fill="#fff" opacity="0.4"/>
+  <rect x="360" y="468" width="180" height="54" rx="27" fill="url(#accent)" opacity="0.95"/>
+  <circle cx="1030" cy="560" r="160" fill="#fff" opacity="0.12"/>
+  <circle cx="1030" cy="560" r="86" fill="#fff" opacity="0.22"/>
+  <path d="M970 560h120M1030 500v120" stroke="#fff" stroke-width="22" stroke-linecap="round" opacity="0.9"/>
+  <path d="M1120 330l170 90-170 90-170-90z" fill="#fff" opacity="0.16"/>
+  <path d="M1110 330l0 180" stroke="#fff" stroke-width="18" stroke-linecap="round" opacity="0.4"/>
+</svg>
