@@ -1,6 +1,6 @@
 # BetterLink Mobile
 
-React Native (Expo) mobile client for the BetterLink platform —  
+React Native (Expo) mobile client for the BetterLink platform.  
 Jamaica's student-employer networking and job-matching app.
 
 ---
@@ -14,6 +14,7 @@ Jamaica's student-employer networking and job-matching app.
 - Use the project-local Expo CLI via `npx expo` (avoid legacy global `expo-cli`)
 - Expo Go app on your Android device **or** Android Studio emulator
 - For Android emulator/device debugging from terminal: Android SDK platform-tools (`adb` on PATH)
+- Backend API running locally (default: `http://localhost:5000`)
 
 ### Install
 
@@ -30,7 +31,7 @@ Open `src/api/client.js` and update `BASE_URL`:
 |---------------------|-------------------------------|
 | Android emulator    | `http://10.0.2.2:5000`        |
 | Physical device     | `http://<your-LAN-IP>:5000`   |
-| Production          | `https://api.betterlink.app`  |
+| Production          | Set by deployment environment |
 
 ### Start
 
@@ -41,6 +42,12 @@ npm start
 # Android emulator directly
 # On Windows, this script also repairs adb and picks up the local Android SDK
 npm run android
+```
+
+From the repository root, you can also launch backend, browser, and mobile together:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Start-Demo.ps1 -MobileMode android
 ```
 
 ### Sanity Check
@@ -62,7 +69,7 @@ BetterLinkMobile/
 │   ├── api/
 │   │   ├── client.js              # Central fetch helper + token helpers
 │   │   ├── auth.js                # login, registerStudent, registerEmployer
-│   │   ├── users.js               # getMe, updateMe  ← /api/users/me
+│   │   ├── users.js               # getMe, updateMe -> /api/users/me
 │   │   ├── jobs.js                # getJobs, getJobById, createJob, applyToJob
 │   │   ├── applications.js        # getMyApplications
 │   │   └── communities.js         # create, get, join, postMessage
@@ -74,7 +81,7 @@ BetterLinkMobile/
 │   │   └── AppNavigator.js        # Auth stack + Student tabs + Employer tabs
 │   │
 │   ├── components/
-│   │   └── index.js               # Button, InputField, Badge, Card, EmptyState…
+│   │   └── index.js               # Button, InputField, Badge, Card, EmptyState...
 │   │
 │   ├── theme/
 │   │   └── index.js               # Colors, Typography, Spacing, Radius
@@ -101,7 +108,7 @@ BetterLinkMobile/
 
 ---
 
-## API Endpoints Connected
+## API Endpoints Used
 
 | Method | Endpoint                        | Screen(s)                    |
 |--------|---------------------------------|------------------------------|
@@ -128,7 +135,7 @@ BetterLinkMobile/
 |------------|----------------------------------------------------|
 | Student    | Jobs · My Applications · Communities · Profile    |
 | Employer   | Browse Jobs · Post a Job · Communities · Profile  |
-| Logged out | Login → Register Student / Register Employer      |
+| Logged out | Login -> Register Student / Register Employer     |
 
 ---
 
@@ -136,7 +143,7 @@ BetterLinkMobile/
 
 | Concern          | Choice                              |
 |------------------|-------------------------------------|
-| Framework        | React Native (Expo SDK 51)          |
+| Framework        | React Native (Expo SDK 55)          |
 | Navigation       | React Navigation 6 (Stack + Tabs)   |
 | Token storage    | expo-secure-store (encrypted)       |
 | State            | React Context + hooks               |
