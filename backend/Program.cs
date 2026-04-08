@@ -124,6 +124,7 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+app.UseCors("DevPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
