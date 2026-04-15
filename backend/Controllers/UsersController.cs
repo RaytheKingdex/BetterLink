@@ -100,6 +100,40 @@ public class UsersController : ControllerBase
 
         var roles = await _userManager.GetRolesAsync(user);
 
+        StudentProfileDto? studentDto = null;
+        EmployerProfileDto? employerDto = null;
+
+        if (roles.Contains("Student"))
+        {
+            var sp = await _dbContext.StudentProfiles.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+            if (sp is not null)
+                studentDto = new StudentProfileDto
+                {
+                    University = sp.University,
+                    ProgramName = sp.ProgramName,
+                    GraduationYear = sp.GraduationYear,
+                    Gpa = sp.Gpa,
+                    Skills = sp.Skills,
+                    ResumeUrl = sp.ResumeUrl,
+                    PortfolioUrl = sp.PortfolioUrl
+                };
+        }
+        else if (roles.Contains("Employer"))
+        {
+            var ep = await _dbContext.EmployerProfiles.AsNoTracking()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+            if (ep is not null)
+                employerDto = new EmployerProfileDto
+                {
+                    OrganizationName = ep.OrganizationName,
+                    Industry = ep.Industry,
+                    Website = ep.Website,
+                    Location = ep.Location,
+                    IsVerified = ep.IsVerified
+                };
+        }
+
         return Ok(new UserProfileResponse
         {
             UserId = user.Id,
@@ -108,7 +142,9 @@ public class UsersController : ControllerBase
             FirstName = user.FirstName,
             LastName = user.LastName,
             Bio = user.Bio,
-            Roles = roles
+            Roles = roles,
+            StudentProfile = studentDto,
+            EmployerProfile = employerDto
         });
     }
 

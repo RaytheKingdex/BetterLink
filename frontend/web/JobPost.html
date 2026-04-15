@@ -3,37 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post a Job - BetterLink</title>
+    <title>Post a Job – BetterLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="CSS/footer.css">
+    <link rel="stylesheet" href="CSS/app.css">
 </head>
 <body>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="text-center mb-4">Post a New Job</h1>
-            <div class="alert d-none" id="jobPostStatus" role="alert"></div>
+<nav class="app-nav">
+    <button type="button" class="toggle-btn" id="sidebarToggle" title="Toggle sidebar">☰</button>
+    <a class="brand" href="Feed.html">BetterLink</a>
+    <div class="nav-right">
+        <span class="user-chip" id="navUserChip"></span>
+        <button type="button" class="signout-btn" onclick="signOut()">Sign Out</button>
+    </div>
+</nav>
 
+<aside class="app-sidebar" id="sidebar">
+    <ul class="sidebar-nav" id="sidebarNav"></ul>
+    <div class="sidebar-signout">
+        <button type="button" onclick="signOut()"><i class="bi bi-box-arrow-left"></i><span>Sign Out</span></button>
+    </div>
+</aside>
+
+<main class="app-main" id="mainArea">
+    <div class="profile-wrap">
+        <div class="page-header">
+            <h4>Post a New Job</h4>
+        </div>
+
+        <div class="bl-card">
             <form id="postJobForm">
                 <div class="mb-3">
-                    <label class="form-label">Job Title</label>
-                    <input type="text" class="form-control" id="jobTitle" required>
+                    <label class="form-label fw-semibold" for="jobTitle">Job Title</label>
+                    <input type="text" class="form-control" id="jobTitle" required placeholder="e.g. Software Engineer">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Application Deadline</label>
-                    <input type="date" class="form-control" id="applicationDeadline">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Location</label>
+                    <label class="form-label fw-semibold" for="location">Location</label>
                     <input type="text" class="form-control" id="location" placeholder="e.g. New York, USA or Remote" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Job Type</label>
+                    <label class="form-label fw-semibold" for="jobType">Job Type</label>
                     <select class="form-select" id="jobType">
                         <option value="Full-Time">Full-Time</option>
                         <option value="Part-Time">Part-Time</option>
@@ -43,113 +55,48 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Job Description</label>
+                    <label class="form-label fw-semibold" for="jobDescription">Job Description</label>
                     <textarea class="form-control" id="jobDescription" rows="6" required></textarea>
                 </div>
 
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5">Post Job</button>
-                </div>
+                <div class="alert alert-danger d-none" id="postError"></div>
+
+                <button type="submit" class="btn-primary w-100">Post Job</button>
             </form>
         </div>
     </div>
-</div>
-
-<footer class="footer mt-5">
-    <div class="container-fluid px-4 px-lg-5 py-5 bg-dark text-light">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-white">BetterLink</h5>
-                <p>Your journey to success starts here.</p>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-white">Quick Links</h5>
-                <ul class="list-unstyled">
-                    <li><a href="Home.html" class="text-light">Home</a></li>
-                    <li><a href="Communities.html" class="text-light">Communities</a></li>
-                    <li><a href="Jobs.html" class="text-light">Jobs</a></li>
-                    <li><a href="Service.html" class="text-light">Services</a></li>
-                    <li><a href="About Us.html" class="text-light">About Us</a></li>
-                    <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-white">Follow Us</h5>
-                <p class="mb-3">Stay connected with us on social media.</p>
-                <div class="d-flex gap-3 fs-4">
-                    <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-black py-3 text-light">
-        <div class="container-fluid px-4 px-lg-5 text-center">
-            <small>&copy; 2026 BetterLink. All rights reserved.</small>
-        </div>
-    </div>
-</footer>
+</main>
 
 <script src="js/api.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const jobPostStatus = document.getElementById('jobPostStatus');
+if (!initPage({ roles: ['Employer'] })) { throw new Error('redirect'); }
 
-function showStatus(message, kind) {
-    jobPostStatus.className = `alert alert-${kind}`;
-    jobPostStatus.textContent = message;
-    jobPostStatus.classList.remove('d-none');
-}
-
-document.getElementById('postJobForm').addEventListener('submit', async function(e) {
+document.getElementById('postJobForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-
-    const jobData = {
-        title: document.getElementById('jobTitle').value.trim(),
-        location: document.getElementById('location').value.trim(),
-        employmentType: document.getElementById('jobType').value.toLowerCase(),
-        description: document.getElementById('jobDescription').value.trim()
-    };
-
-    const deadline = document.getElementById('applicationDeadline').value;
-    if (deadline) {
-        jobData.applicationDeadline = `${deadline}T00:00:00.000Z`;
-    }
-
-    if (!window.BetterLinkApi.requireRole('Employer', 'SignUp.html')) {
-        showStatus('Please sign in with an employer account to post a job.', 'danger');
-        return;
-    }
+    const btn   = this.querySelector('button[type="submit"]');
+    const errEl = document.getElementById('postError');
+    btn.disabled = true; btn.textContent = 'Posting...';
+    errEl.classList.add('d-none');
 
     try {
-        await window.BetterLinkApi.requestJson('/api/jobs', {
+        await apiFetch('/api/jobs', {
             method: 'POST',
-            body: JSON.stringify(jobData)
+            body: JSON.stringify({
+                title:          document.getElementById('jobTitle').value.trim(),
+                location:       document.getElementById('location').value.trim(),
+                employmentType: document.getElementById('jobType').value,
+                description:    document.getElementById('jobDescription').value.trim(),
+            }),
         });
-
-        showStatus('Job posted successfully.', 'success');
-        window.location.href = 'Jobs.html';
-    } catch (error) {
-        showStatus(error.message || 'Job posting failed. Please try again.', 'danger');
-    }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    if (!window.BetterLinkApi.isAuthenticated()) {
-        window.location.href = 'SignUp.html';
-        return;
-    }
-
-    if (window.BetterLinkApi.getCurrentRole() !== 'Employer') {
-        showStatus('Only employer accounts can access this page.', 'warning');
+        alert('Job posted successfully!');
+        window.location.href = 'MyJobs.html';
+    } catch (err) {
+        errEl.textContent = err.message || 'Failed to post job.';
+        errEl.classList.remove('d-none');
+        btn.disabled = false; btn.textContent = 'Post Job';
     }
 });
 </script>
-
 </body>
 </html>

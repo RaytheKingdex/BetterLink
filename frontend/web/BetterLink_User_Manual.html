@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterLink User Manual</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1a1a2e;
+            background: #f8f9fa;
+        }
+        .manual-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            color: #fff;
+            padding: 60px 40px 40px;
+            text-align: center;
+        }
+        .manual-header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .manual-header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+        .manual-header .version {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+        .toc-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 32px 36px;
+            margin: 36px auto;
+            max-width: 860px;
+        }
+        .toc-card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f3460;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        .toc-card ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .toc-card ol li {
+            margin-bottom: 8px;
+        }
+        .toc-card ol li a {
+            color: #0f3460;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .toc-card ol li a:hover {
+            text-decoration: underline;
+        }
+        .section-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 36px 40px;
+            margin: 24px auto;
+            max-width: 860px;
+        }
+        .section-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f3460;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-card h2 .section-num {
+            background: #0f3460;
+            color: #fff;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .section-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        .section-card p, .section-card li {
+            color: #444;
+            line-height: 1.7;
+        }
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .step-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .step-list li .step-num {
+            background: #e8f0fe;
+            color: #0f3460;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .tip-box {
+            background: #e8f4fd;
+            border-left: 4px solid #0f3460;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 0.95rem;
+            color: #1a3a5c;
+        }
+        .tip-box i {
+            margin-right: 6px;
+        }
+        .warn-box {
+            background: #fff8e1;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 0.95rem;
+            color: #7c5800;
+        }
+        .print-btn {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 40px;
+            background: #0f3460;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .print-btn:hover {
+            background: #16213e;
+            color: #fff;
+        }
+        .manual-footer {
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 28px;
+            font-size: 0.88rem;
+        }
+        @media print {
+            body { background: #fff; }
+            .print-btn, .no-print { display: none !important; }
+            .section-card, .toc-card { box-shadow: none; border: 1px solid #ddd; }
+            .manual-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="manual-header">
+    <h1><i class="bi bi-book-fill me-2"></i>BetterLink User Manual</h1>
+    <p>Complete guide to getting the most out of BetterLink</p>
+    <div class="version">Version 1.0 &nbsp;|&nbsp; 2025</div>
+</div>
+
+<!-- Print / Save button -->
+<div class="text-center mt-4 no-print">
+    <button class="print-btn" onclick="window.print()">
+        <i class="bi bi-printer me-2"></i>Print / Save as PDF
+    </button>
+</div>
+
+<!-- Table of Contents -->
+<div class="toc-card">
+    <h2><i class="bi bi-list-ul me-2"></i>Table of Contents</h2>
+    <ol>
+        <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#creating-account">Creating an Account</a></li>
+        <li><a href="#logging-in">Logging In</a></li>
+        <li><a href="#your-profile">Your Profile</a></li>
+        <li><a href="#feed">The Feed</a></li>
+        <li><a href="#jobs">Jobs &amp; Opportunities</a></li>
+        <li><a href="#myjobs">My Jobs (Employer)</a></li>
+        <li><a href="#communities">Communities</a></li>
+        <li><a href="#account-settings">Account &amp; Settings</a></li>
+        <li><a href="#troubleshooting">Troubleshooting &amp; Support</a></li>
+    </ol>
+</div>
+
+<!-- 1. Getting Started -->
+<div class="section-card" id="getting-started">
+    <h2><span class="section-num">1</span> Getting Started</h2>
+    <p>BetterLink is a career networking platform that connects students with employment opportunities and employers with emerging talent. Whether you're a student looking for your first job or an employer searching for qualified candidates, BetterLink has the tools to help you succeed.</p>
+    <h3>Who Is BetterLink For?</h3>
+    <ul>
+        <li><strong>Students &amp; Job Seekers</strong> — Browse jobs, build your profile, follow communities, and connect with employers.</li>
+        <li><strong>Employers &amp; Recruiters</strong> — Post job listings, review applications, and message candidates directly.</li>
+    </ul>
+    <div class="tip-box">
+        <i class="bi bi-lightbulb-fill"></i><strong>Tip:</strong> You can access BetterLink from any modern web browser — no installation required.
+    </div>
+</div>
+
+<!-- 2. Creating an Account -->
+<div class="section-card" id="creating-account">
+    <h2><span class="section-num">2</span> Creating an Account</h2>
+    <p>To use BetterLink's full features, you need to create a free account.</p>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Navigate to the BetterLink homepage and click <strong>Sign Up</strong>.</li>
+        <li><span class="step-num">2</span> Enter your <strong>full name</strong>, <strong>email address</strong>, and a secure <strong>password</strong>.</li>
+        <li><span class="step-num">3</span> Select your account type: <strong>Student</strong> or <strong>Employer</strong>.</li>
+        <li><span class="step-num">4</span> Click <strong>Create Account</strong> to complete registration.</li>
+        <li><span class="step-num">5</span> You will be redirected to your Feed once registration is successful.</li>
+    </ul>
+    <div class="warn-box">
+        <i class="bi bi-exclamation-triangle-fill"></i><strong>Note:</strong> Use a valid email address — it will be used for account recovery and notifications.
+    </div>
+</div>
+
+<!-- 3. Logging In -->
+<div class="section-card" id="logging-in">
+    <h2><span class="section-num">3</span> Logging In</h2>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Click <strong>Login</strong> in the navigation bar.</li>
+        <li><span class="step-num">2</span> Enter your registered <strong>email address</strong> and <strong>password</strong>.</li>
+        <li><span class="step-num">3</span> Click <strong>Sign In</strong>.</li>
+        <li><span class="step-num">4</span> You will be redirected to your personal Feed.</li>
+    </ul>
+    <div class="tip-box">
+        <i class="bi bi-shield-lock-fill"></i> If you're already logged in, visiting the Home page will automatically redirect you to your Feed.
+    </div>
+    <h3>Signing Out</h3>
+    <p>Click the <strong>Sign Out</strong> button in the top navigation bar of any app page to securely log out of your session.</p>
+</div>
+
+<!-- 4. Your Profile -->
+<div class="section-card" id="your-profile">
+    <h2><span class="section-num">4</span> Your Profile</h2>
+    <p>Your profile is your professional identity on BetterLink. Keep it up to date to improve your visibility with employers.</p>
+    <h3>Viewing Your Profile</h3>
+    <p>Click <strong>Profile</strong> in the sidebar navigation to view and edit your profile page.</p>
+    <h3>Profile Information</h3>
+    <ul>
+        <li><strong>Display Name</strong> — Your name as shown to other users.</li>
+        <li><strong>Bio / About</strong> — A short description of yourself, your skills, or your goals.</li>
+        <li><strong>Profile Photo</strong> — Upload a professional photo to make your profile stand out.</li>
+        <li><strong>Followers / Following</strong> — See who follows you and who you follow on the platform.</li>
+    </ul>
+    <div class="tip-box">
+        <i class="bi bi-person-check-fill"></i> Profiles with photos and complete bios are more likely to be noticed by employers.
+    </div>
+</div>
+
+<!-- 5. The Feed -->
+<div class="section-card" id="feed">
+    <h2><span class="section-num">5</span> The Feed</h2>
+    <p>The Feed is your home after logging in. It shows posts from people you follow and activity across the platform.</p>
+    <h3>Creating a Post</h3>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Click inside the <strong>compose box</strong> at the top of the Feed.</li>
+        <li><span class="step-num">2</span> Type your message or update.</li>
+        <li><span class="step-num">3</span> Optionally, click <strong>Attach</strong> to add an image or video.</li>
+        <li><span class="step-num">4</span> Click <strong>Post</strong> to publish.</li>
+    </ul>
+    <h3>Interacting with Posts</h3>
+    <ul>
+        <li><strong>Like</strong> — Click the heart/like button on a post to show appreciation.</li>
+        <li><strong>Comment</strong> — Click the comment icon to leave a reply.</li>
+        <li><strong>Delete</strong> — You can delete your own posts at any time.</li>
+    </ul>
+    <h3>Following Users</h3>
+    <p>Visit a user's profile and click <strong>Follow</strong> to see their posts in your Feed. You can unfollow them the same way.</p>
+</div>
+
+<!-- 6. Jobs -->
+<div class="section-card" id="jobs">
+    <h2><span class="section-num">6</span> Jobs &amp; Opportunities</h2>
+    <p>The Jobs section lists all active job postings on BetterLink, helping students find relevant opportunities quickly.</p>
+    <h3>Browsing Jobs</h3>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Click <strong>Jobs</strong> in the sidebar navigation.</li>
+        <li><span class="step-num">2</span> Browse the list of available positions.</li>
+        <li><span class="step-num">3</span> Click on a job listing to see its full details.</li>
+    </ul>
+    <h3>Applying for a Job</h3>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Open a job listing.</li>
+        <li><span class="step-num">2</span> Review the job description, requirements, and employer details.</li>
+        <li><span class="step-num">3</span> Click <strong>Apply</strong> to submit your application.</li>
+    </ul>
+    <div class="tip-box">
+        <i class="bi bi-briefcase-fill"></i> Complete your profile before applying — employers can view your profile as part of your application.
+    </div>
+</div>
+
+<!-- 7. My Jobs (Employer) -->
+<div class="section-card" id="myjobs">
+    <h2><span class="section-num">7</span> My Jobs (Employer)</h2>
+    <p>Employers can manage their job listings and review applicants from the My Jobs dashboard.</p>
+    <h3>Posting a Job</h3>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Navigate to <strong>My Jobs</strong> in the sidebar.</li>
+        <li><span class="step-num">2</span> Click <strong>Post a Job</strong>.</li>
+        <li><span class="step-num">3</span> Fill in the job title, description, requirements, and other details.</li>
+        <li><span class="step-num">4</span> Click <strong>Submit</strong> to publish the listing.</li>
+    </ul>
+    <h3>Managing Applications</h3>
+    <ul>
+        <li>View all applicants for each of your job listings.</li>
+        <li><strong>Hire</strong> a candidate by clicking the Hire button on their application.</li>
+        <li>Hired candidates automatically receive an onboarding notification.</li>
+    </ul>
+    <h3>Closing a Job</h3>
+    <p>Once a position is filled, you can delete or close the listing from the My Jobs page to stop receiving new applications.</p>
+</div>
+
+<!-- 8. Communities -->
+<div class="section-card" id="communities">
+    <h2><span class="section-num">8</span> Communities</h2>
+    <p>Communities let you connect with groups of people sharing similar interests, industries, or goals.</p>
+    <h3>Browsing Communities</h3>
+    <p>Click <strong>Communities</strong> in the sidebar to see available groups.</p>
+    <h3>Joining a Community</h3>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Find a community that interests you.</li>
+        <li><span class="step-num">2</span> Click <strong>Join</strong>.</li>
+        <li><span class="step-num">3</span> You will see posts from that community in its dedicated feed.</li>
+    </ul>
+    <h3>Creating a Community</h3>
+    <ul class="step-list">
+        <li><span class="step-num">1</span> Click <strong>Create Community</strong>.</li>
+        <li><span class="step-num">2</span> Enter a community name and description.</li>
+        <li><span class="step-num">3</span> Click <strong>Create</strong> to launch the community.</li>
+    </ul>
+</div>
+
+<!-- 9. Account & Settings -->
+<div class="section-card" id="account-settings">
+    <h2><span class="section-num">9</span> Account &amp; Settings</h2>
+    <h3>Changing Your Password</h3>
+    <p>Navigate to your Profile settings and update your password. Always use a strong, unique password.</p>
+    <h3>Privacy</h3>
+    <p>Your email address is never publicly shown to other users. Only your display name and profile content are visible.</p>
+    <h3>Notifications</h3>
+    <p>BetterLink may notify you of new followers, job application updates, and messages. Check your email for platform notifications.</p>
+    <div class="warn-box">
+        <i class="bi bi-exclamation-triangle-fill"></i> Never share your password with anyone. BetterLink staff will never ask for your password.
+    </div>
+</div>
+
+<!-- 10. Troubleshooting -->
+<div class="section-card" id="troubleshooting">
+    <h2><span class="section-num">10</span> Troubleshooting &amp; Support</h2>
+    <h3>I can't log in</h3>
+    <p>Double-check your email and password. Passwords are case-sensitive. If the issue persists, contact support.</p>
+    <h3>My post didn't appear</h3>
+    <p>Refresh the page. If the post is still missing, try reposting. Make sure your text is not empty.</p>
+    <h3>I can't see any jobs</h3>
+    <p>Ensure you are logged in. If jobs still don't appear, the page may still be loading — wait a moment and refresh.</p>
+    <h3>Contact Us</h3>
+    <p>For further assistance, visit our <a href="ContactUs.html" style="color:#0f3460;font-weight:600;">Contact Us</a> page or email support at <strong>support@betterlink.com</strong>.</p>
+    <div class="tip-box">
+        <i class="bi bi-envelope-fill"></i> Include as much detail as possible when contacting support — screenshots and error messages are very helpful.
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="manual-footer">
+    &copy; 2025 BetterLink. All rights reserved. &nbsp;|&nbsp; <a href="Home.html" style="color:rgba(255,255,255,0.6);">Return to Homepage</a>
+</div>
+
+</body>
+</html>

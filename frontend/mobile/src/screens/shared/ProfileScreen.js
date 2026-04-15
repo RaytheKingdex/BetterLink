@@ -257,7 +257,7 @@ export default function ProfileScreen() {
         )}
 
         {/* Role Info Banner */}
-        <Card style={[styles.roleCard, role === 'Student' ? styles.roleCardStudent : styles.roleCardEmployer]}>
+        <Card style={StyleSheet.flatten([styles.roleCard, role === 'Student' ? styles.roleCardStudent : styles.roleCardEmployer])}>
           <Text style={styles.roleCardEmoji}>{role === 'Student' ? '🎓' : '🏢'}</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.roleCardTitle}>
