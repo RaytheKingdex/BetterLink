@@ -8,6 +8,7 @@ using System.Text.Json;
 
 namespace BetterLink.Backend.Tests.Tests;
 
+[Trait("Category", "MySqlIntegration")]
 public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
 {
     private readonly HttpClient _client;
@@ -131,10 +132,9 @@ public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
             new AuthenticationHeaderValue("Bearer", studentLoginAuth.Token);
         var joinResp = await _client.PostAsync($"/api/communities/{communityId}/join", new StringContent("{}", Encoding.UTF8, "application/json"));
         Assert.Equal(HttpStatusCode.OK, joinResp.StatusCode);
-        var messageResp = await _client.PostAsJsonAsync($"/api/communities/{communityId}/messages", new
-        {
-            body = "Hello from real MySQL test"
-        });
+        var messageForm = new MultipartFormDataContent();
+        messageForm.Add(new StringContent("Hello from real MySQL test", Encoding.UTF8), "body");
+        var messageResp = await _client.PostAsync($"/api/communities/{communityId}/messages", messageForm);
         Assert.Equal(HttpStatusCode.OK, messageResp.StatusCode);
 
         var communityGetResp = await _client.GetAsync($"/api/communities/{communityId}");

@@ -1,0 +1,51 @@
+@model CreateJobViewModel
+@{
+    ViewData["Title"] = "Create Job";
+}
+
+<h1 class="h3 mb-3">Post New Job</h1>
+
+<form method="post" action="/jobs/create" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="col-12">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger small"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Description" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="EmploymentType" class="form-label"></label>
+        <select asp-for="EmploymentType" class="form-select">
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+            <option value="internship">Internship</option>
+            <option value="contract">Contract</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="ApplicationDeadline" class="form-label"></label>
+        <input asp-for="ApplicationDeadline" class="form-control" />
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Publish Job</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,32 @@
+@model Job
+@{
+    ViewData["Title"] = "Job Details";
+    var alreadyApplied = (bool?)ViewData["AlreadyApplied"] ?? false;
+}
+
+<div class="card">
+    <div class="card-body">
+        <h1 class="h3">@Model.Title</h1>
+        <p class="text-muted">@Model.Employer.OrganizationName</p>
+        <p><strong>Type:</strong> @Model.EmploymentType</p>
+        <p><strong>Location:</strong> @Model.Location</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <hr />
+        <p>@Model.Description</p>
+
+        @if (User.IsInRole("Student"))
+        {
+            if (alreadyApplied)
+            {
+                <div class="alert alert-success">You already applied to this job.</div>
+            }
+            else
+            {
+                <form method="post" action="/jobs/@Model.Id/apply">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-primary" type="submit">Apply</button>
+                </form>
+            }
+        }
+    </div>
+</div>

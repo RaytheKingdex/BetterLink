@@ -44,8 +44,23 @@ var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "BetterLink.Client";
 
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = "SmartAuth";
+        options.DefaultAuthenticateScheme = "SmartAuth";
+        options.DefaultChallengeScheme = "SmartAuth";
+    })
+    .AddPolicyScheme("SmartAuth", "JWT or Identity cookie", options =>
+    {
+        options.ForwardDefaultSelector = context =>
+        {
+            var authorization = context.Request.Headers.Authorization.ToString();
+            if (!string.IsNullOrWhiteSpace(authorization)
+                && authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                return JwtBearerDefaults.AuthenticationScheme;
+            }
+
+            return IdentityConstants.ApplicationScheme;
+        };
     })
     .AddJwtBearer(options =>
     {
@@ -73,6 +88,15 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddCors(options =>
 {
@@ -80,6 +104,7 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -128,6 +153,16 @@ app.UseCors("DevPolicy");
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+app.UseStaticFiles();
+app.UseCors("Frontend");
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { status = "ok", timestamp = DateTime.UtcNow }));

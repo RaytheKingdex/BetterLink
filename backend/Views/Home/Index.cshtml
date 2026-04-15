@@ -1,0 +1,102 @@
+@model HomeIndexViewModel
+@{
+    ViewData["Title"] = "Home";
+    ViewData["MainClass"] = "p-0";
+}
+
+<div class="home-shell">
+    <header id="npCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#npCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#npCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#npCarousel" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/img/betterlink-hero.svg" alt="BetterLink student and employer illustration" />
+                <div class="carousel-caption">
+                    <div class="caption-box">
+                        <h1 class="mb-2"><strong>Looking for a Community of your Interest?</strong></h1>
+                        <p class="mb-3 small-note">Connect with Fellow Students and Share Your Passions with others!</p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-start">
+                            <a href="/account/register/student" class="btn btn-outline-light">Join as Student</a>
+                            <a href="/jobs" class="btn btn-outline-light">Post Jobs as Employer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <img src="/img/susan-q-yin-2JIvboGLeho-unsplash.jpg" alt="Students collaborating" />
+                <div class="carousel-caption">
+                    <div class="caption-box">
+                        <h2 class="mb-2"><strong>Build your profile and stand out</strong></h2>
+                        <p class="mb-3 small-note">Showcase your skills, program, and goals to employers in a meaningful way.</p>
+                        <a href="/profile" class="btn btn-outline-light">Go to profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <img src="/img/office_team.jpg" alt="Employers and teams" />
+                <div class="carousel-caption">
+                    <div class="caption-box">
+                        <h2 class="mb-2"><strong>Find live opportunities now</strong></h2>
+                        <p class="mb-3 small-note">Browse open roles and apply directly through BetterLink.</p>
+                        <a href="/jobs" class="btn btn-outline-light">Browse jobs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#npCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#npCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </header>
+
+    <section class="container-fluid px-4 px-lg-5 py-5 home-opportunities">
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold text-white mb-1">Latest opportunities</h2>
+                <p class="text-light mb-0">Live listings loaded from the backend.</p>
+            </div>
+            <a href="/jobs" class="btn btn-outline-light rounded-pill">Browse all jobs</a>
+        </div>
+
+        <div id="featuredJobs" class="row g-4">
+            @if (Model.FeaturedJobs.Count == 0)
+            {
+                <div class="col-12">
+                    <p class="text-light">No open jobs available right now.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var job in Model.FeaturedJobs.Take(3))
+                {
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <p class="text-uppercase text-muted small mb-2">@job.EmploymentType</p>
+                                <h5 class="card-title">@(string.IsNullOrWhiteSpace(job.Title) ? "Untitled role" : job.Title)</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@job.Employer.OrganizationName</h6>
+                                <p class="card-text">
+                                    @if (!string.IsNullOrWhiteSpace(job.Description))
+                                    {
+                                        @(job.Description.Length > 120 ? job.Description.Substring(0, 120) + "..." : job.Description)
+                                    }
+                                </p>
+                                <p class="mb-3"><i class="bi bi-geo-alt"></i> @(job.Location ?? "Remote")</p>
+                                <a href="/jobs/@job.Id" class="btn btn-dark btn-sm">View details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+</div>

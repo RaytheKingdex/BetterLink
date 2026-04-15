@@ -56,6 +56,20 @@ public class CommunitiesController : ControllerBase
             .OrderByDescending(c => c.Members.Count)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+    // GET /api/communities?take=20
+    [HttpGet]
+    public async Task<IActionResult> GetCommunities([FromQuery] int take = 20)
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId))
+            return Unauthorized();
+
+        var safeTake = Math.Clamp(take, 1, 100);
+
+        var communities = await _dbContext.Communities
+            .AsNoTracking()
+            .OrderByDescending(c => c.CreatedAt)
+            .Take(safeTake)
             .Select(c => new
             {
                 c.Id,
@@ -64,6 +78,9 @@ public class CommunitiesController : ControllerBase
                 MemberCount = c.Members.Count,
                 IsMember = c.Members.Any(m => m.UserId == userId),
                 IsCreator = c.CreatedByUserId == userId,
+                c.CreatedAt,
+                MemberCount = c.Members.Count,
+                IsMember = c.Members.Any(m => m.UserId == userId)
             })
             .ToListAsync();
 
@@ -180,95 +197,6 @@ public class CommunitiesController : ControllerBase
         return Ok(new { message = "Joined community." });
     }
 
-    // GET /api/communities/mine
-    [HttpGet("mine")]
-    public async Task<IActionResult> GetMyCommunities()
-    {
-        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!long.TryParse(userIdValue, out var userId))
-            return Unauthorized();
-
-        var communities = await _dbContext.CommunityMembers
-            .AsNoTracking()
-            .Where(cm => cm.UserId == userId)
-            .OrderByDescending(cm => cm.JoinedAt)
-            .Select(cm => new
-            {
-                cm.Community.Id,
-                cm.Community.Name,
-                cm.Community.Description,
-                MemberCount = cm.Community.Members.Count,
-                cm.JoinedAt,
-            })
-            .ToListAsync();
-
-        return Ok(communities);
-    }
-
-    // GET /api/communities/search?q=name
-    [HttpGet("search")]
-    public async Task<IActionResult> SearchCommunities([FromQuery] string q = "")
-    {
-        if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
-            return BadRequest("Query must be at least 2 characters.");
-
-        var results = await _dbContext.Communities
-            .AsNoTracking()
-            .Where(c => c.Name.Contains(q))
-            .OrderBy(c => c.Name)
-            .Take(20)
-            .Select(c => new
-            {
-                c.Id,
-                c.Name,
-                c.Description,
-                MemberCount = c.Members.Count,
-            })
-            .ToListAsync();
-
-        return Ok(results);
-    }
-
-    // GET /api/communities/:id/messages?page=1&pageSize=50
-    [HttpGet("{id:long}/messages")]
-    public async Task<IActionResult> GetMessages(long id, [FromQuery] int page = 1, [FromQuery] int pageSize = 50)
-    {
-        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!long.TryParse(userIdValue, out var userId))
-            return Unauthorized();
-
-        var isMember = await _dbContext.CommunityMembers
-            .AnyAsync(cm => cm.CommunityId == id && cm.UserId == userId);
-        if (!isMember)
-            return Forbid();
-
-        pageSize = Math.Clamp(pageSize, 1, 100);
-
-        var messages = await _dbContext.CommunityMessages
-            .AsNoTracking()
-            .Where(m => m.CommunityId == id)
-            .OrderBy(m => m.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(m => new CommunityMessageItem
-            {
-                Id = m.Id,
-                SenderUserId = m.SenderUserId,
-                SenderFirstName = m.Sender.FirstName ?? string.Empty,
-                SenderLastName = m.Sender.LastName ?? string.Empty,
-                Body = m.Body,
-                AttachmentUrl = m.AttachmentUrl,
-                AttachmentType = m.AttachmentType,
-                AttachmentMimeType = m.AttachmentMimeType,
-                AttachmentName = m.AttachmentName,
-                CreatedAt = m.CreatedAt,
-            })
-            .ToListAsync();
-
-        return Ok(messages);
-    }
-
-    // POST /api/communities/:id/messages  (multipart: body + optional attachment)
     [HttpPost("{id:long}/messages")]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(60 * 1024 * 1024)]

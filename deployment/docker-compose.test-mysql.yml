@@ -1,0 +1,22 @@
+services:
+  mysql-test:
+    image: mysql:8.0
+    container_name: betterlink-mysql-test
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: betterlink_mysql_test
+      MYSQL_USER: betterlink_user
+      MYSQL_PASSWORD: ChangeMe123!
+    ports:
+      - "33306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "betterlink_user", "-pChangeMe123!"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - betterlink_mysql_test_data:/var/lib/mysql
+
+volumes:
+  betterlink_mysql_test_data:

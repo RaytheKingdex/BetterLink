@@ -1,0 +1,45 @@
+@model IReadOnlyList<Job>
+@{
+    ViewData["Title"] = "Jobs";
+    var searchQuery = (ViewData["SearchQuery"] as string) ?? string.Empty;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Jobs</h1>
+    @if (User.IsInRole("Employer"))
+    {
+        <a href="/jobs/create" class="btn btn-primary">Post Job</a>
+    }
+</div>
+
+@if (!string.IsNullOrWhiteSpace(searchQuery))
+{
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Showing results for "@searchQuery"</span>
+        <a href="/jobs" class="btn btn-sm btn-outline-secondary">Clear search</a>
+    </div>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No jobs have been posted yet.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var job in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h6">@job.Title</h2>
+                        <p class="small text-muted mb-2">@job.Employer.OrganizationName</p>
+                        <p class="small mb-1">@job.EmploymentType</p>
+                        <p class="small mb-3">@job.Location</p>
+                        <a href="/jobs/@job.Id" class="btn btn-sm btn-outline-dark">Open</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

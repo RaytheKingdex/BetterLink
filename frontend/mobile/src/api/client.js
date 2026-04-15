@@ -1,6 +1,7 @@
 // src/api/client.js
 // Central HTTP client for all BetterLink API calls
 
+import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
@@ -24,6 +25,16 @@ const host = __DEV_DEVICE__
     : LOCALHOST;
 
 export const BASE_URL = `http://${host}:5000`;
+// The client tries the configured base URL first, then common local-development
+// addresses so the same build works on web, iOS simulator, Android emulator, and device runs.
+const BASE_URL_CANDIDATES = [
+  Constants?.expoConfig?.extra?.apiBaseUrl,
+  process.env.EXPO_PUBLIC_API_BASE_URL,
+  Platform.OS === 'android' ? 'http://10.0.2.2:5000' : 'http://localhost:5000',
+  'http://127.0.0.1:5000',
+].filter(Boolean);
+
+export const BASE_URL = BASE_URL_CANDIDATES[0];
 
 const TOKEN_KEY = 'betterlink_token';
 
@@ -63,46 +74,56 @@ export const clearToken = async () => {
  * @throws {ApiError}        - structured error with status + message
  */
 export async function apiFetch(path, options = {}, auth = false) {
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(options.headers || {}),
-  };
+  let lastError = null;
 
-  if (auth) {
-    const token = await getToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+  for (const baseUrl of BASE_URL_CANDIDATES) {
+    try {
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      };
+
+      if (auth) {
+        const token = await getToken();
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+
+      const response = await fetch(`${baseUrl}${path}`, {
+        ...options,
+        headers,
+      });
+
+      // No-content responses (204)
+      if (response.status === 204) {
+        return null;
+      }
+
+      // Try to parse body
+      let body;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        body = await response.json();
+      } else {
+        body = await response.text();
+      }
+
+      if (!response.ok) {
+        const message = extractErrorMessage(body) || `HTTP ${response.status}`;
+        const err = new Error(message);
+        err.status = response.status;
+        err.body = body;
+        throw err;
+      }
+
+      return body;
+    } catch (error) {
+      lastError = error;
     }
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
-
-  // No-content responses (204)
-  if (response.status === 204) {
-    return null;
-  }
-
-  // Try to parse body
-  let body;
-  const contentType = response.headers.get('content-type') || '';
-  if (contentType.includes('application/json')) {
-    body = await response.json();
-  } else {
-    body = await response.text();
-  }
-
-  if (!response.ok) {
-    const message = extractErrorMessage(body) || `HTTP ${response.status}`;
-    const err = new Error(message);
-    err.status = response.status;
-    err.body = body;
-    throw err;
-  }
-
-  return body;
+  throw lastError || new Error('Unable to reach the BetterLink API.');
 }
 
 // ─── Multipart / FormData Fetcher ─────────────────────────────────────────────
@@ -120,31 +141,41 @@ export async function apiFetchFormData(path, formData, auth = false) {
     }
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, {
-    method: 'POST',
-    body: formData,
-    headers,
-  });
+  let lastError = null;
 
-  if (response.status === 204) return null;
+  for (const baseUrl of BASE_URL_CANDIDATES) {
+    try {
+      const response = await fetch(`${baseUrl}${path}`, {
+        method: 'POST',
+        body: formData,
+        headers,
+      });
 
-  let body;
-  const contentType = response.headers.get('content-type') || '';
-  if (contentType.includes('application/json')) {
-    body = await response.json();
-  } else {
-    body = await response.text();
+      if (response.status === 204) return null;
+
+      let body;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        body = await response.json();
+      } else {
+        body = await response.text();
+      }
+
+      if (!response.ok) {
+        const message = extractErrorMessage(body) || `HTTP ${response.status}`;
+        const err = new Error(message);
+        err.status = response.status;
+        err.body = body;
+        throw err;
+      }
+
+      return body;
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  if (!response.ok) {
-    const message = extractErrorMessage(body) || `HTTP ${response.status}`;
-    const err = new Error(message);
-    err.status = response.status;
-    err.body = body;
-    throw err;
-  }
-
-  return body;
+  throw lastError || new Error('Unable to reach the BetterLink API.');
 }
 
 // ─── Error Helpers ─────────────────────────────────────────────────────────────

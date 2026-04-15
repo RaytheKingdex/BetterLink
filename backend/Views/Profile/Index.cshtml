@@ -1,0 +1,79 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1 class="h3 mb-3">My Profile</h1>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <form method="post" action="/profile/index" class="card">
+            @Html.AntiForgeryToken()
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" value="@Model.Email" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <input class="form-control" value="@Model.Role" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Display ID</label>
+                    <input class="form-control" value="@Model.DisplayId" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Bio" class="form-label"></label>
+                    <textarea asp-for="Bio" class="form-control" rows="5"></textarea>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Save Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-5">
+        @if (Model.StudentProfile is not null)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h5">Student Details</h2>
+                    <p><strong>University:</strong> @Model.StudentProfile.University</p>
+                    <p><strong>Program:</strong> @Model.StudentProfile.ProgramName</p>
+                    <p><strong>Graduation:</strong> @Model.StudentProfile.GraduationYear</p>
+                </div>
+            </div>
+        }
+
+        @if (Model.EmployerProfile is not null)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5">Employer Details</h2>
+                    <p><strong>Organization:</strong> @Model.EmployerProfile.OrganizationName</p>
+                    <p><strong>Industry:</strong> @Model.EmployerProfile.Industry</p>
+                    <p><strong>Location:</strong> @Model.EmployerProfile.Location</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

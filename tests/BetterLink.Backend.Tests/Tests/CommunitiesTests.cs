@@ -3,6 +3,7 @@ using BetterLink.Backend.Tests.Helpers;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace BetterLink.Backend.Tests.Tests;
@@ -129,10 +130,9 @@ public class CommunitiesTests : IClassFixture<TestWebApplicationFactory>
         _client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", outsiderToken);
 
-        var response = await _client.PostAsJsonAsync($"/api/communities/{communityId}/messages", new
-        {
-            body = "Should fail because not a member"
-        });
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent("Should fail because not a member", Encoding.UTF8), "body");
+        var response = await _client.PostAsync($"/api/communities/{communityId}/messages", form);
 
         _client.DefaultRequestHeaders.Authorization = null;
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -149,10 +149,9 @@ public class CommunitiesTests : IClassFixture<TestWebApplicationFactory>
             new AuthenticationHeaderValue("Bearer", memberToken);
 
         await _client.PostAsync($"/api/communities/{communityId}/join", content: null);
-        var response = await _client.PostAsJsonAsync($"/api/communities/{communityId}/messages", new
-        {
-            body = "Hello community"
-        });
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent("Hello community", Encoding.UTF8), "body");
+        var response = await _client.PostAsync($"/api/communities/{communityId}/messages", form);
 
         _client.DefaultRequestHeaders.Authorization = null;
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>  
+    <link rel="stylesheet" href="CSS/Home.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="CSS/footer.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-link text-dark me-3" id="sidebarToggle" type="button">
+                <i class="bi bi-list fs-3"></i>
+            </button>
+            <a class="navbar-brand fw-bold text-light" href="#">BetterLinks</a>
+        </div>
+
+        <div class="mx-auto" style="max-width: 600px; width: 100%;">
+            <form class="d-flex">
+                <input class="form-control rounded-pill me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-light rounded-pill" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a href="Login.html" class="btn btn-outline-light rounded-pill">Login</a>
+            <a href="SignUp.html" class="btn btn-outline-light rounded-pill">Sign up</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <ul class="nav flex-column pt-3">
+        <li class="nav-item">
+            <a class="nav-link active" href="Home.html">
+                <i class="bi bi-house-door-fill"></i>
+                <span class="sidebar-text">Home</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Communities.html">
+                <i class="bi bi-people-fill"></i>
+                <span class="sidebar-text">Communities</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Jobs.html">
+                <i class="bi bi-briefcase-fill"></i>
+                <span class="sidebar-text">Jobs</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Service.html">
+                <i class="bi bi-gear-fill"></i>
+                <span class="sidebar-text">Services</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="About Us.html">
+                <i class="bi bi-people-fill"></i>
+                <span class="sidebar-text">About Us</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="ContactUs.html">
+                <i class="bi bi-telephone-fill"></i>
+                <span class="sidebar-text">Contact Us</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+
+    <!-- CAROUSEL -->
+    <header id="npCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#npCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#npCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#npCarousel" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+                <img src="img/betterlink-hero.svg" alt="BetterLink student and employer illustration">
+                <div class="carousel-caption">
+                    <div class="caption-box">
+                        <h1 class="mb-2"><strong>Looking for a Community of your Interest?</strong></h1>
+                        <p class="mb-3 small-note">Connect with Fellow Students and Share Your Passions with others!</p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-start">
+                            <a href="SignUp.html" class="btn btn-outline-light">Join as Student</a>
+                            <a href="Jobs.html" class="btn btn-outline-light">Post Jobs as Employer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#npCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#npCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </header>
+    <section class="container-fluid px-4 px-lg-5 py-5">
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold text-white mb-1">Latest opportunities</h2>
+                <p class="text-light mb-0">Live listings loaded from the backend.</p>
+            </div>
+            <a href="Jobs.html" class="btn btn-outline-light rounded-pill">Browse all jobs</a>
+        </div>
+        <div class="alert d-none" id="homeStatus" role="alert"></div>
+        <div id="featuredJobs" class="row g-4"></div>
+    </section>
+<br><br><br><br><br><br><br><br><br><br><br><br>
+<!-- Footer -->
+    <footer class="footer">
+        <div class="container-fluid px-4 px-lg-5 py-5">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold text-white">BetterLink</h5>
+                    <p>Your journey to success starts here.</p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold text-white">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="Home.html" class="text-light">Home</a></li>
+                        <li><a href="Communities.html" class="text-light">Communities</a></li>
+                        <li><a href="Jobs.html" class="text-light">Jobs</a></li>
+                        <li><a href="Service.html" class="text-light">Services</a></li>
+                        <li><a href="About Us.html" class="text-light">About Us</a></li>
+                        <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold text-white">Follow Us</h5>
+                    <p class="mb-3">Stay connected with us on social media.</p>
+                    <div class="d-flex gap-3 fs-4">
+                        <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-black py-3">
+            <div class="container-fluid px-4 px-lg-5 text-center">
+                <small>&copy; 2026 BetterLink. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+</div>   <!-- End of .main-content -->
+
+<script src="js/api.js"></script>
+<script>
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('collapsed');
+});
+
+const featuredJobs = document.getElementById('featuredJobs');
+const homeStatus = document.getElementById('homeStatus');
+
+function showHomeStatus(message, kind) {
+    homeStatus.className = `alert alert-${kind}`;
+    homeStatus.textContent = message;
+    homeStatus.classList.remove('d-none');
+}
+
+function renderFeaturedJobs(jobs) {
+    if (!jobs.length) {
+        featuredJobs.innerHTML = '<p class="text-light-50">No open jobs available right now.</p>';
+        return;
+    }
+
+    featuredJobs.innerHTML = '';
+
+    jobs.slice(0, 3).forEach(job => {
+        const column = document.createElement('div');
+        column.className = 'col-md-4';
+
+        const card = document.createElement('div');
+        card.className = 'card h-100 shadow-sm';
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        const employmentType = document.createElement('p');
+        employmentType.className = 'text-uppercase text-muted small mb-2';
+        employmentType.textContent = job.employmentType || 'full-time';
+
+        const title = document.createElement('h5');
+        title.className = 'card-title';
+        title.textContent = job.title || 'Untitled role';
+
+        const employer = document.createElement('h6');
+        employer.className = 'card-subtitle mb-2 text-muted';
+        employer.textContent = job.employerName || 'BetterLink Employer';
+
+        const description = document.createElement('p');
+        description.className = 'card-text';
+        description.textContent = job.description ? `${job.description.substring(0, 120)}...` : '';
+
+        const location = document.createElement('p');
+        location.className = 'mb-3';
+        location.textContent = ` ${job.location || 'Remote'}`;
+        location.prepend(Object.assign(document.createElement('i'), { className: 'bi bi-geo-alt' }));
+
+        const link = document.createElement('a');
+        link.className = 'btn btn-dark btn-sm';
+        link.href = 'Jobs.html';
+        link.textContent = 'View details';
+
+        body.append(employmentType, title, employer, description, location, link);
+        card.appendChild(body);
+        column.appendChild(card);
+        featuredJobs.appendChild(column);
+    });
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const jobs = await window.BetterLinkApi.requestJson('/api/jobs?pageSize=3');
+        renderFeaturedJobs(jobs);
+    } catch (error) {
+        showHomeStatus(error.message || 'Unable to load live opportunities.', 'warning');
+        featuredJobs.innerHTML = '';
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
