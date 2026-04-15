@@ -34,8 +34,11 @@ export function AuthProvider({ children }) {
           setRole(profile.roles?.[0] ?? null);
         }
       } catch {
-        // Token expired or invalid — clear it
+        // Token expired or invalid — clear token from storage AND reset state
         await clearToken();
+        setToken(null);
+        setUser(null);
+        setRole(null);
       } finally {
         setIsLoading(false);
       }

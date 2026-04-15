@@ -38,6 +38,24 @@ public class CommunitiesController : ControllerBase
         _env = env;
     }
 
+    // GET /api/communities — browse all communities
+    [HttpGet]
+    public async Task<IActionResult> GetAllCommunities([FromQuery] string? q, [FromQuery] int page = 1, [FromQuery] int pageSize = 30)
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId)) return Unauthorized();
+
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var query = _dbContext.Communities.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(q))
+            query = query.Where(c => c.Name.Contains(q));
+
+        var communities = await query
+            .OrderByDescending(c => c.Members.Count)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
     // GET /api/communities?take=20
     [HttpGet]
     public async Task<IActionResult> GetCommunities([FromQuery] int take = 20)
@@ -57,6 +75,9 @@ public class CommunitiesController : ControllerBase
                 c.Id,
                 c.Name,
                 c.Description,
+                MemberCount = c.Members.Count,
+                IsMember = c.Members.Any(m => m.UserId == userId),
+                IsCreator = c.CreatedByUserId == userId,
                 c.CreatedAt,
                 MemberCount = c.Members.Count,
                 IsMember = c.Members.Any(m => m.UserId == userId)
