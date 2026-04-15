@@ -2,6 +2,8 @@
     background-color: #0d9488;
 }
 
+.home-wrap { padding-top: 56px; }
+
 
 :root {
 --sidebar-width: 240px;

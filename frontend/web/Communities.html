@@ -1,409 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Communities</title>  
-        <link rel="Stylesheet" href="CSS/Communities.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="CSS/footer.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communities – BetterLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="CSS/app.css">
 </head>
-    <body>
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container-fluid">
-        <div class="d-flex align-items-center">
-            <button class="btn btn-link text-dark me-3" id="sidebarToggle" type="button">
-                <i class="bi bi-list fs-3"></i>
-            </button>
-            <a class="navbar-brand fw-bold text-light" href="Home.html">BetterLinks</a>
-        </div>
+<body>
 
-        <div class="mx-auto" style="max-width: 600px; width: 100%;">
-            <form class="d-flex">
-                <input class="form-control rounded-pill me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light rounded-pill" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-          <a href="Login.html" class="btn btn-outline-light rounded-pill">Login</a>
-          <a href="SignUp.html" class="btn btn-outline-light rounded-pill">Sign up</a>
-        </div>
+<nav class="app-nav">
+    <button type="button" class="toggle-btn" id="sidebarToggle" title="Toggle sidebar">☰</button>
+    <a class="brand" href="Feed.html">BetterLink</a>
+    <div class="nav-right">
+        <span class="user-chip" id="navUserChip"></span>
+        <button type="button" class="signout-btn" onclick="signOut()">Sign Out</button>
     </div>
 </nav>
-<!--Sidebar-->
-<aside class="sidebar" id="sidebar">
-        <ul class="nav flex-column pt-3">
-            <li class="nav-item">
-                <a class="nav-link active" href="#">
-                    <i class="bi bi-house-door-fill"></i>
-                    <span class="sidebar-text">Home</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="Communities.html">
-                  <i class="bi bi-people-fill"></i>
-                    <span class="sidebar-text">Communities</span>
-                </a>
-            </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Jobs.html">
-                        <i class="bi bi-briefcase-fill"></i>
-                        <span class="sidebar-text">Jobs</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Service.html">
-                        <i class="bi bi-gear-fill"></i>
-                        <span class="sidebar-text">Services</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="About Us.html">
-                        <i class="bi bi-people-fill"></i>
-                        <span class="sidebar-text">About Us</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="ContactUs.html">
-                        <i class="bi bi-telephone-fill"></i>
-                        <span class="sidebar-text">Contact Us</span>
-                    </a>
-                </li>
-        </ul>
-    </aside>
-<!--End of Sidebar-->
-<br><br>
-<main class="main-content" id="mainContent">
-    <div class="container-fluid">
-        <div class="row">
-            
-            <!-- Main Feed -->
-            <div class="col-lg-8 col-xl-7">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold text-light mb-0">Communities</h3>
-                    <span class="badge text-bg-light d-none" id="roleBadge"></span>
-                </div>
-                <div class="alert d-none" id="communitiesStatus" role="alert"></div>
 
-                <!-- Sort Tabs-->
-                <div class="feed-header p-2 rounded mb-4 d-flex gap-2">
-                    <button class="btn btn-sm px-4 active" onclick="setActive(this)">Discover</button>
-                    <button class="btn btn-sm px-4" onclick="setActive(this)">Trending</button>
-                    <button class="btn btn-sm px-4" onclick="setActive(this)">New</button>
-                    <button class="btn btn-sm px-4" onclick="setActive(this)">My Communities</button>
-                </div>
+<aside class="app-sidebar" id="sidebar">
+    <ul class="sidebar-nav" id="sidebarNav"></ul>
+    <div class="sidebar-signout">
+        <button type="button" onclick="signOut()"><i class="bi bi-box-arrow-left"></i><span>Sign Out</span></button>
+    </div>
+</aside>
 
-                <!-- Communities Container -->
-                <div id="community-container" class="row g-3"></div>
-            </div>
-
-            <!-- Right Sidebar -->
-            <div class="col-lg-4 col-xl-5 d-none d-lg-block">
-                <div class="sticky-top" style="top: 80px;">
-                    
-    <!-- Create Community Card -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Create your own community</h5>
-            <p class="card-text">Build a space for people who share your interests.</p>
-            <button onclick="toggleCommunityForm()" class="btn join-btn w-100 rounded-pill py-2">
-            Create Community
+<main class="app-main" id="mainArea">
+    <div class="page-header">
+        <h4>Communities</h4>
+        <button type="button" class="btn-primary" onclick="openCreateModal()">
+            <i class="bi bi-plus-circle me-1"></i>New Community
         </button>
     </div>
-</div>
 
-
-<!-- Popular Communities -->
-<div class="card">
-    <div class="card-header bg-transparent border-bottom">
-        <strong>Popular right now</strong>
-        </div>
-        <div class="list-group list-group-flush" id="popular-communities"></div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-
-<footer class="footer">
-    <div class="container-fluid px-4 px-lg-5 py-5">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-white">BetterLink</h5>
-                <p>Your journey to success starts here.</p>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-white">Quick Links</h5>
-                <ul class="list-unstyled">
-                    <li><a href="Home.html" class="text-light">Home</a></li>
-                    <li><a href="Communities.html" class="text-light">Communities</a></li>
-                    <li><a href="Jobs.html" class="text-light">Jobs</a></li>
-                    <li><a href="Service.html" class="text-light">Services</a></li>
-                    <li><a href="About Us.html" class="text-light">About Us</a></li>
-                    <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-white">Follow Us</h5>
-                <p class="mb-3">Stay connected with us on social media.</p>
-                <div class="d-flex gap-3 fs-4">
-                    <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
-                </div>
-            </div>
-        </div>
+    <!-- Filter bar -->
+    <div class="filter-bar mb-3">
+        <input type="text" id="searchInput" placeholder="Search communities...">
+        <select id="tabFilter" title="Filter" onchange="applyTab()">
+            <option value="all">All Communities</option>
+            <option value="mine">My Communities</option>
+        </select>
     </div>
 
-    <div class="bg-black py-3">
-        <div class="container-fluid px-4 px-lg-5 text-center">
-            <small>&copy; 2026 BetterLink. All rights reserved.</small>
-        </div>
+    <!-- Community list -->
+    <div id="communityList">
+        <div class="spinner-wrap"><div class="spinner-border text-secondary" role="status"></div></div>
     </div>
-</footer>
 </main>
 
-<!--Post Community Area-->
+<!-- Create Community Modal -->
 <div class="modal fade" id="communityModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark text-light">
-            <div class="modal-header border-0">
-                <h5 class="modal-title">Create a New Community</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Create a New Community</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Community Name</label>
-                    <input type="text" class="form-control bg-dark text-light" id="communityName" placeholder="e.g. TechTalks">
+                    <label class="form-label fw-semibold" for="communityName">Community Name</label>
+                    <input type="text" class="form-control" id="communityName" placeholder="e.g. TechTalks">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control bg-dark text-light" rows="4" id="communityDescription" placeholder="What is this community about?"></textarea>
+                    <label class="form-label fw-semibold" for="communityDesc">Description</label>
+                    <textarea class="form-control" id="communityDesc" rows="4" placeholder="What is this community about?"></textarea>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Category</label>
-                    <select class="form-select bg-dark text-light" id="communityCategory">
-                        <option>Technology</option>
-                        <option>Health & Fitness</option>
-                        <option>Entertainment</option>
-                        <option>Business</option>
-                        <option>Other</option>
-                    </select>
-                </div>
+                <div class="alert alert-danger d-none" id="createError"></div>
             </div>
-            <div class="modal-footer border-0">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="createCommunity()">Create</button>
+                <button type="button" class="btn-primary" id="createCommunityBtn" onclick="createCommunity()">Create</button>
             </div>
         </div>
     </div>
 </div>
 
-
-
 <script src="js/api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const communitiesStatus = document.getElementById('communitiesStatus');
-const roleBadge = document.getElementById('roleBadge');
-let communities = [];
+if (!initPage({ roles: ['Student'] })) { throw new Error('redirect'); }
 
-function renderAuthRole() {
-    const role = window.BetterLinkApi.getCurrentRole();
-    if (!role) {
-        roleBadge.classList.add('d-none');
+let allCommunities = [];
+
+function renderCommunities(list) {
+    const container = document.getElementById('communityList');
+    if (list.length === 0) {
+        container.innerHTML = '<div class="bl-card text-center text-muted py-5"><i class="bi bi-people fs-1 d-block mb-2"></i>No communities found.</div>';
         return;
     }
-
-    roleBadge.textContent = `Signed in as ${role}`;
-    roleBadge.classList.remove('d-none');
+    container.innerHTML = list.map(c => `
+        <div class="community-card">
+            <div class="c-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="flex-grow-1">
+                <div class="c-name">${escHtml(c.name)}</div>
+                <div class="c-meta">${c.memberCount} member${c.memberCount !== 1 ? 's' : ''}</div>
+                <div class="c-desc">${escHtml(c.description || '')}</div>
+            </div>
+            <div class="c-actions">
+                <button type="button" class="btn-join${c.isMember ? ' joined' : ''}"
+                    onclick="joinCommunity(${c.id}, this)"
+                    ${c.isMember ? 'disabled' : ''}>${c.isMember ? 'Joined' : 'Join'}</button>
+            </div>
+        </div>`).join('');
 }
 
-function showStatus(message, kind) {
-    communitiesStatus.className = `alert alert-${kind}`;
-    communitiesStatus.textContent = message;
-    communitiesStatus.classList.remove('d-none');
-}
-
-// load communities
-function loadCommunities() {
-    const container = document.getElementById('community-container');
-    container.innerHTML = '';
-
-    communities.forEach(community => {
-        const column = document.createElement('div');
-        column.className = 'col-12';
-
-        const card = document.createElement('div');
-        card.className = 'card h-100';
-
-        const body = document.createElement('div');
-        body.className = 'card-body d-flex gap-3 p-4';
-
-        const icon = document.createElement('div');
-        icon.className = 'community-icon';
-        const iconElement = document.createElement('i');
-        iconElement.className = 'bi bi-people';
-        icon.appendChild(iconElement);
-
-        const content = document.createElement('div');
-        content.className = 'flex-grow-1';
-
-        const header = document.createElement('div');
-        header.className = 'd-flex justify-content-between align-items-start';
-
-        const textGroup = document.createElement('div');
-
-        const title = document.createElement('h5');
-        title.className = 'fw-bold mb-1';
-        title.textContent = community.name || 'Untitled community';
-
-        const memberCount = document.createElement('p');
-        memberCount.className = 'text-muted small mb-2';
-        memberCount.textContent = `${community.memberCount || 0} members`;
-
-        const joinButton = document.createElement('button');
-        joinButton.className = 'btn join-btn btn-sm rounded-pill px-4';
-        joinButton.type = 'button';
-        joinButton.textContent = window.BetterLinkApi.isAuthenticated() ? 'Join' : 'Sign up to join';
-        joinButton.addEventListener('click', () => joinCommunity(community.id));
-
-        textGroup.append(title, memberCount);
-        header.append(textGroup, joinButton);
-
-        const description = document.createElement('p');
-        description.className = 'mb-0';
-        description.textContent = community.description || '';
-
-        content.append(header, description);
-        body.append(icon, content);
-        card.appendChild(body);
-        column.appendChild(card);
-        container.appendChild(column);
-    });
-}
-
-// Load popular communities in right sidebar
-function loadPopularCommunities() {
-    const container = document.getElementById('popular-communities');
-    container.innerHTML = '';
-
-    communities.slice(0, 5).forEach((community, index) => {
-        const item = document.createElement('a');
-        item.href = '#';
-        item.className = 'list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center gap-3 py-3';
-
-        const rank = document.createElement('span');
-        rank.className = 'text-orange fw-bold';
-        rank.textContent = `${index + 1}.`;
-
-        const details = document.createElement('div');
-        const name = document.createElement('strong');
-        name.textContent = community.name || 'Untitled community';
-        const count = document.createElement('small');
-        count.className = 'text-muted';
-        count.textContent = `${community.memberCount || 0} members`;
-
-        details.append(name, document.createElement('br'), count);
-        item.append(rank, details);
-        container.appendChild(item);
-    });
-}
-
-// Toggle sidebar
-document.getElementById('sidebarToggle').addEventListener('click', () => {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    sidebar.classList.toggle('collapsed');
-    mainContent.classList.toggle('collapsed');
-});
-
-// Create Community Modal
-function toggleCommunityForm() {
-    const modal = new bootstrap.Modal(document.getElementById('communityModal'));
-    modal.show();
+async function joinCommunity(id, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Joining...';
+    try {
+        await apiFetch(`/api/communities/${id}/join`, { method: 'POST' });
+        btn.textContent = 'Joined';
+        btn.classList.add('joined');
+        const c = allCommunities.find(x => x.id === id);
+        if (c) { c.isMember = true; c.memberCount++; }
+    } catch (err) {
+        alert(err.message || 'Could not join community.');
+        btn.disabled = false;
+        btn.textContent = 'Join';
+    }
 }
 
 async function createCommunity() {
     const name = document.getElementById('communityName').value.trim();
-    const description = document.getElementById('communityDescription').value.trim();
+    const desc = document.getElementById('communityDesc').value.trim();
+    const errEl = document.getElementById('createError');
+    errEl.classList.add('d-none');
+    if (!name) { errEl.textContent = 'Please enter a community name.'; errEl.classList.remove('d-none'); return; }
 
-    if (!window.BetterLinkApi.requireAuth('SignUp.html')) {
-        return;
-    }
-
-    try {
-        const result = await window.BetterLinkApi.requestJson('/api/communities', {
-            method: 'POST',
-            body: JSON.stringify({ name, description })
-        });
-
-        const modal = bootstrap.Modal.getInstance(document.getElementById('communityModal'));
-        modal.hide();
-        showStatus('Community created successfully.', 'success');
-
-        const createdId = result.id || result.Id;
-        if (createdId) {
-            await joinCommunity(createdId);
-        }
-
-        await loadCommunityData();
-    } catch (error) {
-        showStatus(error.message || 'Unable to create the community.', 'danger');
-    }
-}
-
-async function joinCommunity(communityId) {
-    if (!window.BetterLinkApi.requireAuth('SignUp.html')) {
-        return;
-    }
+    const btn = document.getElementById('createCommunityBtn');
+    btn.disabled = true; btn.textContent = 'Creating...';
 
     try {
-        await window.BetterLinkApi.requestJson(`/api/communities/${communityId}/join`, {
-            method: 'POST'
-        });
-
-        showStatus('Joined community successfully.', 'success');
-    } catch (error) {
-        showStatus(error.message || 'Unable to join the community.', 'danger');
+        await apiFetch('/api/communities', { method: 'POST', body: JSON.stringify({ name, description: desc }) });
+        bootstrap.Modal.getInstance(document.getElementById('communityModal')).hide();
+        document.getElementById('communityName').value = '';
+        document.getElementById('communityDesc').value = '';
+        await loadCommunities();
+    } catch (err) {
+        errEl.textContent = err.message || 'Failed to create community.';
+        errEl.classList.remove('d-none');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Create';
     }
 }
 
-// Simple active button style
-function setActive(btn) {
-    document.querySelectorAll('.feed-header button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-}
-
-// Initialize everything
-async function loadCommunityData() {
-    if (!window.BetterLinkApi.isAuthenticated()) {
-        showStatus('Sign up to create and join communities.', 'info');
-        communities = [];
-        loadCommunities();
-        loadPopularCommunities();
-        return;
-    }
-
+async function loadCommunities() {
     try {
-        communities = await window.BetterLinkApi.requestJson('/api/communities?take=20');
-        loadCommunities();
-        loadPopularCommunities();
-    } catch (error) {
-        showStatus(error.message || 'Unable to load communities.', 'warning');
-        communities = [];
-        loadCommunities();
-        loadPopularCommunities();
+        allCommunities = await apiFetch('/api/communities') || [];
+        applyTab();
+    } catch {
+        document.getElementById('communityList').innerHTML =
+            '<div class="bl-card text-center text-danger py-5">Failed to load communities.</div>';
     }
 }
 
-window.onload = () => {
-    renderAuthRole();
-    loadCommunityData();
-};
+function applyTab() {
+    const tab    = document.getElementById('tabFilter').value;
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    let list = tab === 'mine' ? allCommunities.filter(c => c.isMember) : allCommunities;
+    if (search) list = list.filter(c => c.name.toLowerCase().includes(search) || (c.description || '').toLowerCase().includes(search));
+    renderCommunities(list);
+}
+
+function openCreateModal() {
+    document.getElementById('createError').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('communityModal')).show();
+}
+
+document.getElementById('searchInput').addEventListener('input', applyTab);
+
+loadCommunities();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+</body>
+</html>

@@ -3,323 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jobs - BetterLink</title>
-    <link rel="stylesheet" href="CSS/Job.css">
+    <title>Browse Jobs – BetterLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="CSS/footer.css">
+    <link rel="stylesheet" href="CSS/app.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container-fluid">
-        <div class="d-flex align-items-center">
-            <button class="btn btn-link text-light me-3" id="sidebarToggle" type="button">
-                <i class="bi bi-list fs-3"></i>
-            </button>
-            <a class="navbar-brand fw-bold text-light" href="Home.html">BetterLink</a>
-        </div>
-
-        <div class="mx-auto" style="max-width: 600px; width: 100%;">
-            <form class="d-flex" id="searchForm">
-                <input class="form-control rounded-pill me-2" type="search" id="navbarSearch" 
-                       placeholder="Search jobs..." aria-label="Search">
-                <button class="btn btn-outline-light rounded-pill" type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
-        </div>
-
-        <div class="d-flex align-items-center gap-3">
-            <a href="JobPost.html" class="btn btn-primary">Post a Job</a>
-            <a href="Login.html" class="btn btn-outline-light rounded-pill">Login</a>
-            <a href="SignUp.html" class="btn btn-outline-light rounded-pill">Sign up</a>
-        </div>
+<nav class="app-nav">
+    <button type="button" class="toggle-btn" id="sidebarToggle" title="Toggle sidebar">☰</button>
+    <a class="brand" href="Feed.html">BetterLink</a>
+    <div class="nav-right">
+        <span class="user-chip" id="navUserChip"></span>
+        <button type="button" class="signout-btn" onclick="signOut()">Sign Out</button>
     </div>
 </nav>
 
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-    <ul class="nav flex-column pt-3">
-        <li class="nav-item"><a class="nav-link" href="Home.html"><i class="bi bi-house-door-fill"></i> <span class="sidebar-text">Home</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="Communities.html"><i class="bi bi-people-fill"></i> <span class="sidebar-text">Communities</span></a></li>
-        <li class="nav-item"><a class="nav-link active" href="Jobs.html"><i class="bi bi-briefcase-fill"></i> <span class="sidebar-text">Jobs</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="Service.html"><i class="bi bi-gear-fill"></i> <span class="sidebar-text">Services</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="About Us.html"><i class="bi bi-people-fill"></i> <span class="sidebar-text">About Us</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="ContactUs.html"><i class="bi bi-telephone-fill"></i> <span class="sidebar-text">Contact Us</span></a></li>
-    </ul>
+<aside class="app-sidebar" id="sidebar">
+    <ul class="sidebar-nav" id="sidebarNav"></ul>
+    <div class="sidebar-signout">
+        <button type="button" onclick="signOut()"><i class="bi bi-box-arrow-left"></i><span>Sign Out</span></button>
+    </div>
 </aside>
 
-<div class="main-content">
-    <header class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="carousel-caption">
-                    <h1>Find Your Dream Job</h1>
-                    <p>Discover opportunities that match your skills and aspirations.</p>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="job-container">
-        <h1 class="mb-4">Job Listings</h1>
-        <div class="mb-3">
-            <span class="badge text-bg-light d-none" id="roleBadge"></span>
-        </div>
-        <div class="alert d-none" id="jobsStatus" role="alert"></div>
-
-        <!-- Filters -->
-        <div class="filter-section mb-4">
-            <div class="row g-3">
-                <div class="col-md-5">
-                    <input type="text" class="form-control" id="searchInput" 
-                           placeholder="Search by job title, company, or keywords">
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="jobTypeFilter">
-                        <option value="">All Job Types</option>
-                        <option value="Full-Time">Full-Time</option>
-                        <option value="Part-Time">Part-Time</option>
-                        <option value="Remote">Remote</option>
-                        <option value="Contract">Contract</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="locationFilter">
-                        <option value="">All Locations</option>
-                    </select>
-                </div>
-                <div class="col-md-1 d-grid">
-                    <button class="btn btn-outline-secondary" id="clearFilters">Clear</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Job List -->
-        <div id="jobList" class="job-grid"></div>
+<main class="app-main" id="mainArea">
+    <div class="page-header">
+        <h4>Browse Jobs</h4>
     </div>
-<br><br><br><br><br><br><br><br><br><br><br>
-<!-- Footer -->
-    <footer class="footer">
-        <div class="container-fluid px-4 px-lg-5 py-5">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold text-white">BetterLink</h5>
-                    <p>Your journey to success starts here.</p>
-                </div>
-                
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold text-white">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="Home.html" class="text-light">Home</a></li>
-                        <li><a href="Communities.html" class="text-light">Communities</a></li>
-                        <li><a href="Jobs.html" class="text-light">Jobs</a></li>
-                        <li><a href="Service.html" class="text-light">Services</a></li>
-                        <li><a href="About Us.html" class="text-light">About Us</a></li>
-                        <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold text-white">Follow Us</h5>
-                    <p class="mb-3">Stay connected with us on social media.</p>
-                    <div class="d-flex gap-3 fs-4">
-                        <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="bg-black py-3">
-            <div class="container-fluid px-4 px-lg-5 text-center">
-                <small>&copy; 2026 BetterLink. All rights reserved.</small>
+    <!-- Filters -->
+    <div class="filter-bar">
+        <input type="text" id="searchInput" placeholder="Job title, company, or keyword">
+        <select id="typeFilter" title="Filter by job type">
+            <option value="">All Types</option>
+            <option>Full-Time</option>
+            <option>Part-Time</option>
+            <option>Remote</option>
+            <option>Contract</option>
+        </select>
+        <select id="locationFilter" title="Filter by location">
+            <option value="">All Locations</option>
+        </select>
+        <button type="button" class="btn-outline-primary" id="clearBtn">Clear</button>
+    </div>
+
+    <div id="jobsList">
+        <div class="spinner-wrap"><div class="spinner-border text-secondary" role="status"></div></div>
+    </div>
+</main>
+
+<!-- Apply Modal -->
+<div class="modal fade" id="applyModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="applyModalTitle">Apply</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" for="coverLetter">Cover Letter <span class="text-muted fw-normal">(optional)</span></label>
+                    <textarea class="form-control" id="coverLetter" rows="5"
+                        placeholder="Tell the employer why you're a great fit..."></textarea>
+                </div>
+                <div class="alert alert-danger d-none" id="applyError"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn-primary" id="applySubmitBtn" onclick="submitApplication()">Submit Application</button>
             </div>
         </div>
-    </footer>
-</div>   <!-- End of .main-content -->
-</body>
+    </div>
+</div>
+
 <script src="js/api.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Sidebar toggle
-document.getElementById('sidebarToggle').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
-    document.querySelector('.main-content').classList.toggle('collapsed');
-});
+if (!initPage({ roles: ['Student'] })) { throw new Error('redirect'); }
 
-document.getElementById('searchForm').addEventListener('submit', event => {
-    event.preventDefault();
-    applyFilters();
-});
-
-const jobsStatus = document.getElementById('jobsStatus');
-const roleBadge = document.getElementById('roleBadge');
 let allJobs = [];
+let activeJobId = null;
 
-function renderAuthRole() {
-    const role = window.BetterLinkApi.getCurrentRole();
-    if (!role) {
-        roleBadge.classList.add('d-none');
-        return;
-    }
-
-    roleBadge.textContent = `Signed in as ${role}`;
-    roleBadge.classList.remove('d-none');
-}
-
-function showStatus(message, kind) {
-    jobsStatus.className = `alert alert-${kind}`;
-    jobsStatus.textContent = message;
-    jobsStatus.classList.remove('d-none');
-}
-
-// Populate location dropdown dynamically
-function populateLocations(jobs) {
-    const locationSelect = document.getElementById('locationFilter');
-    const uniqueLocations = [...new Set(jobs.map(job => job.location).filter(Boolean))].sort();
-
-    locationSelect.innerHTML = '<option value="">All Locations</option>';
-    uniqueLocations.forEach(loc => {
-        const option = document.createElement('option');
-        option.value = loc;
-        option.textContent = loc;
-        locationSelect.appendChild(option);
-    });
-}
-
-// Load and display jobs
-function loadJobs(jobsToShow) {
-    const jobList = document.getElementById('jobList');
-    jobList.innerHTML = "";
-
-    const jobs = jobsToShow || allJobs;
-
-    if (jobs.length === 0) {
-        jobList.innerHTML = `<p class="text-center text-muted py-5">No jobs found matching your filters.</p>`;
-        return;
-    }
-
-    jobs.forEach((job) => {
-        const card = document.createElement('div');
-        card.className = 'job-card';
-
-        const header = document.createElement('div');
-        header.className = 'job-header';
-
-        const left = document.createElement('div');
-
-        const title = document.createElement('h4');
-        title.textContent = job.title || 'Untitled role';
-
-        const company = document.createElement('h5');
-        company.className = 'company-name';
-        company.textContent = job.employerName || 'BetterLink Employer';
-
-        const type = document.createElement('span');
-        type.className = 'job-type';
-        type.textContent = job.employmentType || 'full-time';
-
-        left.append(title, company);
-        header.append(left, type);
-
-        const location = document.createElement('p');
-        location.className = 'job-location';
-        const geo = document.createElement('i');
-        geo.className = 'bi bi-geo-alt';
-        location.append(geo, document.createTextNode(` ${job.location || 'Remote'}`));
-
-        const description = document.createElement('p');
-        description.className = 'job-description';
-        description.textContent = job.description ? `${job.description.substring(0, 160)}...` : '';
-
-        const footer = document.createElement('div');
-        footer.className = 'job-footer';
-
-        const button = document.createElement('button');
-        button.className = 'apply-btn';
-        button.type = 'button';
-        button.textContent = 'Apply Now';
-        button.addEventListener('click', () => applyForJob(job.id));
-
-        footer.appendChild(button);
-        card.append(header, location, description, footer);
-
-        jobList.appendChild(card);
-    });
-}
-
-// Apply all filters
-function applyFilters() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const typeFilter = document.getElementById('jobTypeFilter').value;
-    const locationFilter = document.getElementById('locationFilter').value;
-
-    let filteredJobs = allJobs;
-
-    filteredJobs = filteredJobs.filter(job => {
-        const matchesSearch = !searchTerm || 
-            job.title?.toLowerCase().includes(searchTerm) ||
-            job.employerName?.toLowerCase().includes(searchTerm) ||
-            job.description?.toLowerCase().includes(searchTerm);
-
-        const matchesType = !typeFilter || job.employmentType?.toLowerCase() === typeFilter.toLowerCase();
-        const matchesLocation = !locationFilter || job.location === locationFilter;
-
-        return matchesSearch && matchesType && matchesLocation;
-    });
-
-    loadJobs(filteredJobs);
-}
-
-async function applyForJob(jobId) {
-    if (!window.BetterLinkApi.requireRole('Student', 'SignUp.html')) {
-        showStatus('Only student accounts can apply for jobs.', 'warning');
-        return;
-    }
-
-    const coverLetter = window.prompt('Enter a short cover letter or leave blank to submit without one:') || '';
-
+async function loadJobs() {
     try {
-        await window.BetterLinkApi.requestJson(`/api/jobs/${jobId}/apply`, {
-            method: 'POST',
-            body: JSON.stringify({ coverLetter: coverLetter.trim() || null })
-        });
-
-        showStatus('Application submitted successfully.', 'success');
-    } catch (error) {
-        showStatus(error.message || 'Unable to submit application.', 'danger');
+        allJobs = await apiFetch('/api/jobs') || [];
+        populateLocations();
+        renderJobs(allJobs);
+    } catch (err) {
+        document.getElementById('jobsList').innerHTML = `<div class="alert alert-danger">${escHtml(err.message)}</div>`;
     }
 }
 
-// Event Listeners for Live Filtering
-document.getElementById('searchInput').addEventListener('input', applyFilters);
-document.getElementById('jobTypeFilter').addEventListener('change', applyFilters);
-document.getElementById('locationFilter').addEventListener('change', applyFilters);
+function populateLocations() {
+    const sel = document.getElementById('locationFilter');
+    const locs = [...new Set(allJobs.map(j => j.location).filter(Boolean))].sort();
+    sel.innerHTML = '<option value="">All Locations</option>' +
+        locs.map(l => `<option>${escHtml(l)}</option>`).join('');
+}
 
-document.getElementById('clearFilters').addEventListener('click', () => {
+function renderJobs(jobs) {
+    const el = document.getElementById('jobsList');
+    if (jobs.length === 0) {
+        el.innerHTML = `<div class="bl-card text-center text-muted py-5">
+            <i class="bi bi-briefcase fs-1 d-block mb-2"></i>No jobs match your filters.</div>`;
+        return;
+    }
+    el.innerHTML = jobs.map(j => `
+        <div class="job-card">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
+                <div>
+                    <div class="job-title">${escHtml(j.title)}</div>
+                    <div class="job-company">${escHtml(j.employerName || '')}</div>
+                </div>
+                <span class="badge-type">${escHtml(j.employmentType || 'Full-Time')}</span>
+            </div>
+            <div class="job-meta">
+                <span><i class="bi bi-geo-alt"></i>${escHtml(j.location || 'N/A')}</span>
+                <span><i class="bi bi-calendar"></i>${j.postedDate ? new Date(j.postedDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''}</span>
+            </div>
+            <div class="job-desc">${escHtml((j.description || '').substring(0, 200))}${(j.description || '').length > 200 ? '...' : ''}</div>
+            <button type="button" class="btn-primary btn-pill" onclick="openApply(${j.id}, '${escHtml(j.title)}')">Apply Now</button>
+        </div>`).join('');
+}
+
+function applyFilters() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const type   = document.getElementById('typeFilter').value;
+    const loc    = document.getElementById('locationFilter').value;
+    renderJobs(allJobs.filter(j =>
+        (!search || j.title?.toLowerCase().includes(search) || j.employerName?.toLowerCase().includes(search) || j.description?.toLowerCase().includes(search)) &&
+        (!type   || j.employmentType === type) &&
+        (!loc    || j.location === loc)
+    ));
+}
+
+function openApply(jobId, title) {
+    activeJobId = jobId;
+    document.getElementById('applyModalTitle').textContent = `Apply — ${title}`;
+    document.getElementById('coverLetter').value = '';
+    document.getElementById('applyError').classList.add('d-none');
+    document.getElementById('applySubmitBtn').disabled = false;
+    document.getElementById('applySubmitBtn').textContent = 'Submit Application';
+    new bootstrap.Modal(document.getElementById('applyModal')).show();
+}
+
+async function submitApplication() {
+    const btn   = document.getElementById('applySubmitBtn');
+    const errEl = document.getElementById('applyError');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+    errEl.classList.add('d-none');
+    try {
+        await apiFetch(`/api/jobs/${activeJobId}/apply`, {
+            method: 'POST',
+            body: JSON.stringify({ coverLetter: document.getElementById('coverLetter').value.trim() }),
+        });
+        bootstrap.Modal.getInstance(document.getElementById('applyModal')).hide();
+        alert('Application submitted successfully!');
+    } catch (err) {
+        errEl.textContent = err.message || 'Failed to submit.';
+        errEl.classList.remove('d-none');
+        btn.disabled = false; btn.textContent = 'Submit Application';
+    }
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('typeFilter').addEventListener('change', applyFilters);
+document.getElementById('locationFilter').addEventListener('change', applyFilters);
+document.getElementById('clearBtn').addEventListener('click', () => {
     document.getElementById('searchInput').value = '';
-    document.getElementById('jobTypeFilter').value = '';
+    document.getElementById('typeFilter').value = '';
     document.getElementById('locationFilter').value = '';
     applyFilters();
 });
 
-// Initialize page
-window.onload = async () => {
-    renderAuthRole();
-    try {
-        allJobs = await window.BetterLinkApi.requestJson('/api/jobs');
-        populateLocations(allJobs);
-        loadJobs();
-    } catch (error) {
-        jobsStatus.className = 'alert alert-warning';
-        jobsStatus.textContent = error.message || 'Unable to load live jobs right now.';
-        jobsStatus.classList.remove('d-none');
-        loadJobs([]);
-    }
-};
+loadJobs();
 </script>
+</body>
 </html>

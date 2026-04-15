@@ -3,151 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services - BetterLink</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="CSS/ContactUs.css">
-    <link rel="stylesheet" href="CSS/footer.css">
+    <title>Services – BetterLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="CSS/public.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container-fluid">
-        <div class="d-flex align-items-center">
-            <button class="btn btn-link text-dark me-3" id="sidebarToggle" type="button">
-                <i class="bi bi-list fs-3"></i>
-            </button>
-            <a class="navbar-brand fw-bold text-light" href="Home.html">BetterLinks</a>
-        </div>
 
-        <div class="mx-auto" style="max-width: 600px; width: 100%;">
-            <form class="d-flex">
-                <input class="form-control rounded-pill me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light rounded-pill" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-          <a href="Login.html" class="btn btn-outline-light rounded-pill">Login</a>
-          <a href="SignUp.html" class="btn btn-outline-light rounded-pill">Sign up</a>
-        </div>
+<nav class="pub-nav">
+    <a class="brand" href="Home.html">BetterLink</a>
+    <ul class="nav-links">
+        <li><a href="Home.html">Home</a></li>
+        <li><a href="Service.html" class="active">Services</a></li>
+        <li><a href="About Us.html">About Us</a></li>
+        <li><a href="ContactUs.html">Contact Us</a></li>
+    </ul>
+    <div class="nav-actions">
+        <a href="Login.html" class="btn-ghost">Login</a>
+        <a href="SignUp.html" class="btn-solid">Sign Up</a>
     </div>
 </nav>
-<!--Sidebar-->
-<aside class="sidebar" id="sidebar">
-        <ul class="nav flex-column pt-3">
-            <li class="nav-item">
-                <a class="nav-link active" href="Home.html">
-                    <i class="bi bi-house-door-fill"></i>
-                    <span class="sidebar-text">Home</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="Communities.html">
-                  <i class="bi bi-people-fill"></i>
-                    <span class="sidebar-text">Communities</span>
-                </a>
-            </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Jobs.html">
-                        <i class="bi bi-briefcase-fill"></i>
-                        <span class="sidebar-text">Jobs</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Service.html">
-                        <i class="bi bi-gear-fill"></i>
-                        <span class="sidebar-text">Services</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="About Us.html">
-                        <i class="bi bi-people-fill"></i>
-                        <span class="sidebar-text">About Us</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="ContactUs.html">
-                        <i class="bi bi-telephone-fill"></i>
-                        <span class="sidebar-text">Contact Us</span>
-                    </a>
-                </li>
-        </ul>
-    </aside>
 
-    
-<div class="main-content">
-<!--End of Sidebar-->
-<div class="container mt-5 pt-5">
-        <h1 class="text-center mb-4">Our Services</h1>
-        <p class="lead text-center mb-5">At BetterLinks, we offer a variety of services to help you grow and succeed in your career. Whether you're looking for career coaching, networking opportunities, or community events, we've got you covered.</p>
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <i class="bi bi-person-lines-fill fs-1 mb-3"></i>
-                <h3>Career Coaching</h3>
-                <p>Our career coaching services are designed to help you navigate your career path and achieve your professional goals. Whether you're looking for resume advice, interview preparation, or career guidance, our experienced coaches are here to support you.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <i class="bi bi-people-fill fs-1 mb-3"></i>
-                <h3>Networking Opportunities</h3>
-                <p>BetterLinks provides numerous networking opportunities through our online platform and in-person events. Connect with industry professionals, join discussions, and expand your network to open doors to new opportunities.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <i class="bi bi-calendar-event-fill fs-1 mb-3"></i>
-                <h3>Community Events</h3>
-                <p>We host a variety of community events, including webinars, workshops, and meetups. These events are designed to foster learning, collaboration, and connection among our members.</p>
-            </div>
+<!-- Page hero -->
+<div class="page-hero">
+    <h1>Our Services</h1>
+    <p>Everything BetterLink offers to help you connect, grow, and succeed in your career journey.</p>
+</div>
+
+<!-- Core services -->
+<section class="section section-white">
+    <h2 class="section-title">What We Offer</h2>
+    <p class="section-sub">Tailored tools and resources for students and employers alike.</p>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="bi bi-person-lines-fill"></i></div>
+            <h3>Career Coaching</h3>
+            <p>Navigate your career path with expert guidance. Get resume advice, interview preparation, and goal-setting support from experienced coaches.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="bi bi-people-fill"></i></div>
+            <h3>Networking</h3>
+            <p>Connect with industry professionals and fellow students through communities, direct messaging, and platform-wide events.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="bi bi-calendar-event-fill"></i></div>
+            <h3>Community Events</h3>
+            <p>Participate in webinars, workshops, and virtual meetups designed to foster learning and collaboration among members.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="bi bi-briefcase-fill"></i></div>
+            <h3>Job Matching</h3>
+            <p>Our intelligent job board matches students with relevant opportunities based on skills, program, and graduation year.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="bi bi-building"></i></div>
+            <h3>Employer Hub</h3>
+            <p>Employers can post listings, review student applications, hire candidates, and send automated onboarding messages.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="bi bi-shield-check-fill"></i></div>
+            <h3>Verified Profiles</h3>
+            <p>Every user profile is tied to a real account. Employers are verified, and student profiles include academic credentials.</p>
         </div>
     </div>
-<br><br><br><br><br><br><br><br><br><br><br>
-<!-- Footer -->
-    <footer class="footer">
-        <div class="container-fluid px-4 px-lg-5 py-5">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold text-white">BetterLink</h5>
-                    <p>Your journey to success starts here.</p>
-                </div>
-                
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold text-white">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="Home.html" class="text-light">Home</a></li>
-                        <li><a href="Communities.html" class="text-light">Communities</a></li>
-                        <li><a href="Jobs.html" class="text-light">Jobs</a></li>
-                        <li><a href="Service.html" class="text-light">Services</a></li>
-                        <li><a href="About Us.html" class="text-light">About Us</a></li>
-                        <li><a href="ContactUs.html" class="text-light">Contact Us</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold text-white">Follow Us</h5>
-                    <p class="mb-3">Stay connected with us on social media.</p>
-                    <div class="d-flex gap-3 fs-4">
-                        <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+</section>
 
-        <div class="bg-black py-3">
-            <div class="container-fluid px-4 px-lg-5 text-center">
-                <small>&copy; 2026 BetterLink. All rights reserved.</small>
+<!-- CTA -->
+<section class="cta-strip">
+    <h2>Start Using BetterLink Today</h2>
+    <p>Join thousands of students and employers already on the platform.</p>
+    <div class="cta-btns">
+        <a href="SignUp.html" class="hero-btn-primary">Create Free Account</a>
+        <a href="ContactUs.html" class="hero-btn-outline">Contact Us</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="pub-footer">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">BetterLink</div>
+            <p class="footer-desc">Connecting students with opportunities and employers with talent.</p>
+        </div>
+        <div>
+            <h5>Navigate</h5>
+            <ul>
+                <li><a href="Home.html">Home</a></li>
+                <li><a href="Service.html">Services</a></li>
+                <li><a href="About Us.html">About Us</a></li>
+                <li><a href="ContactUs.html">Contact Us</a></li>
+            </ul>
+        </div>
+        <div>
+            <h5>Account</h5>
+            <ul>
+                <li><a href="Login.html">Login</a></li>
+                <li><a href="SignUp.html">Sign Up</a></li>
+            </ul>
+        </div>
+        <div>
+            <h5>Follow Us</h5>
+            <div class="social-row">
+                <a href="https://www.facebook.com/betterlinkja1" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="https://x.com/betterlinkja1" target="_blank" rel="noopener" title="Twitter" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="https://www.instagram.com/betterlinkja1/" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="https://www.linkedin.com/company/betterlinkja1" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
             </div>
         </div>
-    </footer>
-</div>   <!-- End of .main-content -->
+        <div>
+            <h5>Resources</h5>
+            <ul>
+                <li><a href="BetterLink_User_Manual.html" target="_blank" rel="noopener"><i class="bi bi-book"></i> User Manual</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">&copy; 2025 BetterLink. All rights reserved.</div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.getElementById('sidebarToggle').addEventListener('click', function() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-
-    sidebar.classList.toggle('collapsed');
-    mainContent.classList.toggle('collapsed');
-});
-</script>
