@@ -26,7 +26,7 @@ export async function getMyCommunities() {
 }
 
 export async function searchCommunities(q) {
-  return apiFetch(`/api/communities/search?q=${encodeURIComponent(q)}`, {}, true);
+  return apiFetch(`/api/communities?q=${encodeURIComponent(q)}`, {}, true);
 }
 
 export async function getCommunityMessages(id, page = 1, pageSize = 50) {

@@ -56,20 +56,6 @@ public class CommunitiesController : ControllerBase
             .OrderByDescending(c => c.Members.Count)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-    // GET /api/communities?take=20
-    [HttpGet]
-    public async Task<IActionResult> GetCommunities([FromQuery] int take = 20)
-    {
-        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!long.TryParse(userIdValue, out var userId))
-            return Unauthorized();
-
-        var safeTake = Math.Clamp(take, 1, 100);
-
-        var communities = await _dbContext.Communities
-            .AsNoTracking()
-            .OrderByDescending(c => c.CreatedAt)
-            .Take(safeTake)
             .Select(c => new
             {
                 c.Id,
@@ -78,9 +64,32 @@ public class CommunitiesController : ControllerBase
                 MemberCount = c.Members.Count,
                 IsMember = c.Members.Any(m => m.UserId == userId),
                 IsCreator = c.CreatedByUserId == userId,
-                c.CreatedAt,
-                MemberCount = c.Members.Count,
-                IsMember = c.Members.Any(m => m.UserId == userId)
+                c.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(communities);
+    }
+
+    // GET /api/communities/mine — communities the current user has joined
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetMyCommunities()
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId)) return Unauthorized();
+
+        var communities = await _dbContext.CommunityMembers
+            .AsNoTracking()
+            .Where(cm => cm.UserId == userId)
+            .Select(cm => new
+            {
+                cm.Community.Id,
+                cm.Community.Name,
+                cm.Community.Description,
+                MemberCount = cm.Community.Members.Count,
+                IsMember = true,
+                IsCreator = cm.Community.CreatedByUserId == userId,
+                cm.Community.CreatedAt
             })
             .ToListAsync();
 
@@ -195,6 +204,45 @@ public class CommunitiesController : ControllerBase
 
         await _dbContext.SaveChangesAsync();
         return Ok(new { message = "Joined community." });
+    }
+
+    // GET /api/communities/:id/messages
+    [HttpGet("{id:long}/messages")]
+    public async Task<IActionResult> GetMessages(long id, [FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+    {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdValue, out var userId))
+            return Unauthorized();
+
+        var isMember = await _dbContext.CommunityMembers
+            .AnyAsync(cm => cm.CommunityId == id && cm.UserId == userId);
+        if (!isMember)
+            return Forbid();
+
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var messages = await _dbContext.CommunityMessages
+            .AsNoTracking()
+            .Where(m => m.CommunityId == id)
+            .OrderBy(m => m.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(m => new CommunityMessageItem
+            {
+                Id = m.Id,
+                SenderUserId = m.SenderUserId,
+                SenderFirstName = m.Sender.FirstName ?? string.Empty,
+                SenderLastName = m.Sender.LastName ?? string.Empty,
+                Body = m.Body,
+                AttachmentUrl = m.AttachmentUrl,
+                AttachmentType = m.AttachmentType,
+                AttachmentMimeType = m.AttachmentMimeType,
+                AttachmentName = m.AttachmentName,
+                CreatedAt = m.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(messages);
     }
 
     [HttpPost("{id:long}/messages")]

@@ -14,7 +14,6 @@ import { Platform } from 'react-native';
 // Set __DEV_DEVICE__ = false when running on an emulator/simulator.
 const __DEV_DEVICE__ = false;
 
-const LOCALHOST = 'localhost';
 const ANDROID_EMULATOR = '10.0.2.2';
 const LAN_IP = '192.168.0.4'; // ← update to your machine's LAN IP for physical device
 
@@ -22,15 +21,14 @@ const host = __DEV_DEVICE__
   ? LAN_IP
   : Platform.OS === 'android'
     ? ANDROID_EMULATOR
-    : LOCALHOST;
+    : 'localhost';
 
-export const BASE_URL = `http://${host}:5000`;
 // The client tries the configured base URL first, then common local-development
 // addresses so the same build works on web, iOS simulator, Android emulator, and device runs.
 const BASE_URL_CANDIDATES = [
   Constants?.expoConfig?.extra?.apiBaseUrl,
   process.env.EXPO_PUBLIC_API_BASE_URL,
-  Platform.OS === 'android' ? 'http://10.0.2.2:5000' : 'http://localhost:5000',
+  `http://${host}:5000`,
   'http://127.0.0.1:5000',
 ].filter(Boolean);
 

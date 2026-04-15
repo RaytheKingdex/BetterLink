@@ -90,19 +90,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Frontend", policy =>
-    {
-        policy.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-builder.Services.AddCors(options =>
-{
     options.AddPolicy("DevPolicy", policy =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
@@ -151,12 +142,6 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseCors("DevPolicy");
 app.UseStaticFiles();
-app.UseAuthentication();
-app.UseAuthorization();
-
-
-app.UseStaticFiles();
-app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 

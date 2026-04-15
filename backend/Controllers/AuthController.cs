@@ -99,7 +99,9 @@ public class AuthController : ControllerBase
             UserId = user.Id,
             DisplayId = user.DisplayId,
             Email = user.Email ?? string.Empty,
-            Role = "Student"
+            Role = "Student",
+            FirstName = user.FirstName,
+            LastName = user.LastName
         });
     }
 
@@ -148,7 +150,9 @@ public class AuthController : ControllerBase
             UserId = user.Id,
             DisplayId = user.DisplayId,
             Email = user.Email ?? string.Empty,
-            Role = "Employer"
+            Role = "Employer",
+            FirstName = user.FirstName,
+            LastName = user.LastName
         });
     }
 
@@ -174,8 +178,11 @@ public class AuthController : ControllerBase
         {
             Token = token,
             UserId = user.Id,
+            DisplayId = user.DisplayId,
             Email = user.Email ?? string.Empty,
-            Role = roles.FirstOrDefault() ?? "Student"
+            Role = roles.FirstOrDefault() ?? "Student",
+            FirstName = user.FirstName,
+            LastName = user.LastName
         });
     }
 }
