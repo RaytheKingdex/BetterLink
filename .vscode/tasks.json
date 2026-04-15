@@ -1,0 +1,126 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Demo: Launch Backend Window",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "Start-Process powershell -ArgumentList '-NoExit','-ExecutionPolicy','Bypass','-Command','Set-Location ''${workspaceFolder}\\backend''; dotnet run'"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Launch Mobile Android Window",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "Start-Process powershell -ArgumentList '-NoExit','-ExecutionPolicy','Bypass','-Command','Set-Location ''${workspaceFolder}\\frontend\\mobile''; npm install; npm run android'"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Launch Mobile Expo Window",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "Start-Process powershell -ArgumentList '-NoExit','-ExecutionPolicy','Bypass','-Command','Set-Location ''${workspaceFolder}\\frontend\\mobile''; npm install; npm start'"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Open Browser",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "Start-Process 'http://localhost:5000'"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Start (Android via script)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\Start-Demo.ps1",
+        "-MobileMode",
+        "android"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Start (Expo via script)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\Start-Demo.ps1",
+        "-MobileMode",
+        "expo"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Start (Web only via script)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\Start-Demo.ps1",
+        "-MobileMode",
+        "none"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: All (Android compound)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Demo: Start (Android via script)"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: All (Expo compound)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Demo: Start (Expo via script)"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Web Only compound",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Demo: Start (Web only via script)"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
