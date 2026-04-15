@@ -6,6 +6,25 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 // ─── Config ────────────────────────────────────────────────────────────────────
+// Android emulator cannot reach "localhost" — it maps the host machine to 10.0.2.2.
+// Physical Android/iOS devices on the same Wi-Fi need the host machine's LAN IP.
+// iOS simulator and web can use localhost directly.
+//
+// Set __DEV_DEVICE__ = true  when running on a physical device over Wi-Fi.
+// Set __DEV_DEVICE__ = false when running on an emulator/simulator.
+const __DEV_DEVICE__ = false;
+
+const LOCALHOST = 'localhost';
+const ANDROID_EMULATOR = '10.0.2.2';
+const LAN_IP = '192.168.0.4'; // ← update to your machine's LAN IP for physical device
+
+const host = __DEV_DEVICE__
+  ? LAN_IP
+  : Platform.OS === 'android'
+    ? ANDROID_EMULATOR
+    : LOCALHOST;
+
+export const BASE_URL = `http://${host}:5000`;
 // The client tries the configured base URL first, then common local-development
 // addresses so the same build works on web, iOS simulator, Android emulator, and device runs.
 const BASE_URL_CANDIDATES = [

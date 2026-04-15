@@ -15,5 +15,8 @@
       "username": "betterlink_dev"
     }
   ],
-  "sqltools.useNodeRuntime": true
+  "sqltools.useNodeRuntime": true,
+  "chat.tools.terminal.autoApprove": {
+    "dotnet run": true
+  }
 }

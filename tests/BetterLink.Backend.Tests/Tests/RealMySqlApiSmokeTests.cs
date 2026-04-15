@@ -21,6 +21,7 @@ public class RealMySqlApiSmokeTests : IClassFixture<MySqlWebApplicationFactory>
     [Fact]
     public async Task EndToEndFlow_WorksAgainstRealMySql()
     {
+
         // Health
         var health = await _client.GetAsync("/health");
         Assert.Equal(HttpStatusCode.OK, health.StatusCode);

@@ -1,10 +1,16 @@
 # Database
 
-Database assets for BetterLink MVP.
+Database assets and SQL references for BetterLink.
 
 ## Files
 
 - `schema.sql`: MySQL 8 schema for users, employers, jobs, applications, communities, and messages
+
+## Important
+
+`schema.sql` is a reference/baseline script for learning and manual database setup.
+The running backend schema evolves through Entity Framework migrations in `backend/Migrations/`.
+For the API runtime database model, treat EF Core migrations as the source of truth.
 
 ## Core Entity Coverage
 
@@ -30,6 +36,14 @@ SOURCE schema.sql;
 
 ```sql
 SHOW TABLES;
+```
+
+## Runtime Schema Workflow
+
+For backend-driven schema updates:
+
+```powershell
+dotnet ef database update --project .\backend\BetterLink.Backend.csproj
 ```
 
 ## Notes

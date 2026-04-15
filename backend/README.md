@@ -1,140 +1,65 @@
-# Backend Setup (ASP.NET Core)
+# Backend (ASP.NET Core)
 
-This folder contains the BetterLink API implementation. The backend is designed as a beginner-friendly, role-based REST API for students, employers, and admins.
+This folder contains the BetterLink backend API.
 
-## Recommended Stack
+## Stack
 
-- .NET 8 (ASP.NET Core Web API)
-- Entity Framework Core + Pomelo MySQL provider
-- ASP.NET Core Identity (user and role management)
-- JWT bearer authentication
-- Swagger/OpenAPI for endpoint testing
+- .NET 8 Web API
+- Entity Framework Core
+- ASP.NET Core Identity
+- JWT + Identity cookie smart-authentication policy
+- Swagger in the Development environment
 
-## Folder Structure
+## Run Locally
 
-- `Controllers/`: HTTP endpoint controllers
-- `Data/`: EF Core DbContext and identity seed setup
-- `Models/`: Entities, DTOs, and request/response models
-- `Services/`: Domain services such as JWT token generation
-- `Program.cs`: Host bootstrap, middleware, auth, and Swagger wiring
+From the repository root:
 
-## Prerequisites
-
-- **.NET 8 SDK (x64)** — download from <https://dotnet.microsoft.com/download/dotnet/8.0>  
-  Install the **SDK** package, not just the Runtime.
-- Visual Studio 2022 or VS Code
-- MySQL 8+ (or SQL Server)
-- Git
-
-### MySQL note for local development and tests
-
-- Development mode can run without MySQL when `UseInMemoryDatabase=true` in `appsettings.Development.json`.
-- The integration test `RealMySqlApiSmokeTests` requires a reachable MySQL test database at `127.0.0.1:33306`.
-
-> **Windows PATH note:** Windows may ship with a 32-bit (x86) `dotnet` runtime in
-> `C:\Program Files (x86)\dotnet\` that contains **no SDK** and appears first in PATH.
-> After installing the x64 SDK, verify the right `dotnet` is on your PATH:
->
-> ```powershell
-> Get-Command dotnet | Select-Object -ExpandProperty Source
-> # should show C:\Program Files\dotnet\dotnet.exe
-> ```
->
-> If it shows the x86 path, prepend the x64 directory for your session:
->
-> ```powershell
-> $env:PATH = "C:\Program Files\dotnet;" + $env:PATH
-> dotnet --version   # should now print 8.x.xxx or higher
-> ```
->
-> For a permanent fix, open **System Properties → Environment Variables** and move
-> `C:\Program Files\dotnet` above `C:\Program Files (x86)\dotnet` in the system PATH.
-
-## Initial Setup
-
-1. Move into the backend folder:
-
-```bash
-cd backend
+```powershell
+dotnet run --project .\backend\BetterLink.Backend.csproj
 ```
 
-1. Restore NuGet dependencies:
+Or from this folder:
 
-```bash
-dotnet restore
-```
-
-1. Create database and apply migrations:
-
-```bash
-dotnet ef migrations add InitialIdentityAndDomain
-dotnet ef database update
-```
-
-1. Run API:
-
-```bash
+```powershell
 dotnet run
 ```
 
-1. Open Swagger at `https://localhost:<port>/swagger`.
+Default local URL is typically `http://localhost:5000`.
 
-## Environment Configuration
+## Environment and Data Mode
 
-`appsettings.json` and `appsettings.Development.json` are already included. Update:
+- In Development, you can use in-memory persistence by setting `UseInMemoryDatabase=true` in `appsettings.Development.json`.
+- For MySQL-backed runs, configure `ConnectionStrings:DefaultConnection`.
 
-- `ConnectionStrings:DefaultConnection`
+Required settings:
+
 - `Jwt:Secret`
 - `Jwt:Issuer`
 - `Jwt:Audience`
 - `Jwt:ExpirationInMinutes`
 
-Use environment variables or Azure App Service settings for production secrets.
+## Key Endpoints
 
-## Security Baseline
-
-- Use ASP.NET Core Identity password hashing and validation.
-- Use short-lived JWT access tokens.
-- Protect endpoints with role-based authorization (`Student`, `Employer`, `Admin`).
-- Validate incoming payloads with model validation attributes.
-- Enforce HTTPS in production.
-
-## MVP Endpoint Plan
-
+- `GET /health`
 - `POST /api/auth/register/student`
 - `POST /api/auth/register/employer`
 - `POST /api/auth/login`
 - `GET /api/users/me`
-- `PUT /api/users/me`
 - `GET /api/jobs`
-- `GET /api/jobs/{id}`
-- `POST /api/jobs`
-- `POST /api/jobs/{id}/apply`
-- `GET /api/applications/me`
-- `POST /api/communities`
-- `POST /api/communities/{id}/join`
-- `POST /api/communities/{id}/messages`
+- `GET /api/feed`
 
-## Testing
+See `../docs/API_Endpoints.md` for the complete endpoint list.
 
-- Use Swagger UI for manual endpoint checks.
-- Use Postman collection for role-based flow tests.
-- Add unit tests for:
-  - register/login and token issuance
-  - role-based authorization
-  - job posting ownership rules
+## Tests
 
-## Logging for Documentation
+From the repository root:
 
-- Enable repo-level git hooks: `../scripts/Enable-GitHooks.ps1`
-- Enable global hooks across repositories: `../scripts/Enable-GlobalGitHookLogging.ps1`
-- Start a full terminal transcript session: `../scripts/Start-RepoTranscript.ps1`
-- Logs are written to `activity-traces/` (repo level) and optionally `$HOME/git-activity-traces` (global).
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Run-BackendSanityTests.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\Run-BackendAllTests.ps1
+```
 
-## Suggested Development Order
+## Windows PATH Note
 
-1. Authentication and user profile
-2. Job posting and browse/apply flow
-3. Employer candidate review
-4. Community membership and messaging
-5. Deployment hardening
+If `dotnet` resolves to `C:\Program Files (x86)\dotnet\dotnet.exe`, update PATH so
+`C:\Program Files\dotnet\dotnet.exe` comes first.

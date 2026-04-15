@@ -371,14 +371,6 @@ export default function FollowingSidebar() {
         <Pressable style={styles.backdrop} onPress={closeSidebar} />
       )}
 
-      {/* FAB toggle button */}
-      <TouchableOpacity
-        style={[styles.fab, { bottom: insets.bottom + 80 }]}
-        onPress={() => isOpen ? closeSidebar() : (loadFollowing(), closeSidebar === closeSidebar)}
-        activeOpacity={0.85}
-      >
-      </TouchableOpacity>
-
       {/* Sidebar panel */}
       <Animated.View
         style={[
@@ -482,15 +474,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.35)',
     zIndex: 100,
-  },
-
-  // FAB — not rendered visibly (sidebar opens via header button)
-  fab: {
-    position: 'absolute',
-    right: 0,
-    width: 0,
-    height: 0,
-    zIndex: 99,
   },
 
   // Sidebar panel — dark GitHub theme
