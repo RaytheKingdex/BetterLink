@@ -149,6 +149,11 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+app.UseCors("DevPolicy");
+app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.UseStaticFiles();
 app.UseCors("Frontend");
